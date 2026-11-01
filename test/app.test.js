@@ -6,7 +6,7 @@ import path from 'node:path';
 import { createApp } from '../server.js';
 import { JsonStore } from '../lib/store.js';
 import { GitHubStore } from '../lib/github-store.js';
-import { adaptHandler } from '../netlify/functions/api.mjs';
+import netlifyHandler, { adaptHandler } from '../netlify/functions/api.mjs';
 
 const password = 'cenadelitto';
 const adminIdentity = { firstName: 'Andrea', lastName: 'Giurisato' };
@@ -212,6 +212,24 @@ test('le sessioni continuano a funzionare tra istanze serverless', async t => {
   assert.ok(adminResponse.headers.get('set-cookie').includes('Secure'));
   const tooBig = await handler(new Request('https://cena.example/api/auth/login', { method: 'POST', body: 'x'.repeat(17000) }));
   assert.equal(tooBig.status, 413);
+});
+
+test('Netlify indica le variabili mancanti senza esporre valori o segreti', async t => {
+  const required = ['ADMIN_FIRST_NAME', 'ADMIN_LAST_NAME', 'ADMIN_PASSWORD', 'GITHUB_TOKEN', 'GITHUB_REPOSITORY'];
+  const previous = Object.fromEntries(required.map(name => [name, process.env[name]]));
+  t.after(() => {
+    for (const [name, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  });
+  for (const name of required) delete process.env[name];
+  process.env.ADMIN_PASSWORD = 'valore-segreto-di-test';
+  const response = await netlifyHandler(new Request('https://cena.example/api/state'), {});
+  assert.equal(response.status, 503);
+  const result = await response.json();
+  assert.equal(result.code, 'CONFIG_MISSING');
+  assert.deepEqual(result.missing, required.filter(name => name !== 'ADMIN_PASSWORD'));
+  assert.ok(!JSON.stringify(result).includes('valore-segreto-di-test'));
 });
 
 test('GitHub: un conflitto rilegge il JSON e conserva entrambe le modifiche', async () => {

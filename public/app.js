@@ -155,6 +155,10 @@ document.querySelector('#team-form').addEventListener('submit', event => {
 });
 async function boot() {
   try { state = await api('/api/state'); render(); }
-  catch { main.innerHTML = '<section class="connection-error"><span class="eyebrow">UN PICCOLO IMPREVISTO</span><h1>Il tavolo non è ancora pronto.</h1><p>Non riusciamo a contattare il server. Riprova tra poco.</p><button class="button primary" id="retry">Riprova ↻</button></section>'; document.querySelector('#retry').addEventListener('click', boot); }
+  catch (error) {
+    main.innerHTML = '<section class="connection-error"><span class="eyebrow">UN PICCOLO IMPREVISTO</span><h1>Il tavolo non è ancora pronto.</h1><p id="connection-description"></p><button class="button primary" id="retry">Riprova ↻</button></section>';
+    document.querySelector('#connection-description').textContent = error.message === 'Failed to fetch' ? 'Non riusciamo a contattare il server. Riprova tra poco.' : error.message;
+    document.querySelector('#retry').addEventListener('click', boot);
+  }
 }
 boot();

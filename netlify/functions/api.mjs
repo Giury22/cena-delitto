@@ -36,6 +36,15 @@ export function adaptHandler(handler) {
   };
 }
 export default async function handler(request, context) {
+  const required = ['ADMIN_FIRST_NAME', 'ADMIN_LAST_NAME', 'ADMIN_PASSWORD', 'GITHUB_TOKEN', 'GITHUB_REPOSITORY'];
+  const missing = required.filter(name => !process.env[name]?.trim());
+  if (missing.length) {
+    return Response.json({
+      code: 'CONFIG_MISSING',
+      error: `Configurazione Netlify incompleta: mancano ${missing.join(', ')}. L’organizzatore deve impostarle nelle variabili d’ambiente delle Functions ed eseguire un nuovo deploy.`,
+      missing
+    }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+  }
   try {
     appPromise ||= createApp({
       adminPassword: process.env.ADMIN_PASSWORD,
