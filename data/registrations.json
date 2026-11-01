@@ -1,5 +1,18 @@
 {
   "version": 1,
-  "users": [],
+  "users": [
+    {
+      "id": "37146a1b-d8a6-452b-90d2-e6b54fcaa6d6",
+      "firstName": "wew",
+      "lastName": "ewe",
+      "nickname": "qweq",
+      "passwordSalt": "ba3f2c74fcf6d911d22c2ce679583390",
+      "passwordHash": "212fca6a8e26f6dd94e3f09881b018cbe3ba46e36fd660797515c7ede7866e32",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-01T17:34:52.288Z"
+    }
+  ],
   "teams": []
 }
