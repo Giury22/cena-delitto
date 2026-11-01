@@ -8,7 +8,7 @@
       "nickname": "😬😬😬😬😬",
       "passwordSalt": "0727707312fed0ed7309c94b99e562d9",
       "passwordHash": "adeac0249a1dd334b2e4689db29e5b39ad62a04928c3bf757197af4f60f6bc63",
-      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
+      "teamId": null,
       "killerPreference": "yes",
       "attending": true,
       "createdAt": "2026-11-01T17:39:12.424Z"
