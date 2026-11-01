@@ -203,7 +203,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
       return send(200, await state(session));
     } catch (error) {
       if (!error.status) console.error('Errore del server:', error.message);
-      if (!res.headersSent) send(error.status || 500, { error: error.status ? error.message : 'Non è stato possibile salvare. Riprova tra poco.' });
+      if (!res.headersSent) send(error.status || 500, { error: error.status ? error.message : 'Non è stato possibile salvare. Riprova tra poco.', ...(error.code?.startsWith('GITHUB_') ? { code: error.code } : {}) });
       else res.end();
     }
   });

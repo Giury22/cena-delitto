@@ -252,6 +252,29 @@ test('GitHub: un conflitto rilegge il JSON e conserva entrambe le modifiche', as
   assert.equal(requests.filter(method => method === 'PUT').length, 2);
 });
 
+test('un token senza permesso di scrittura produce un errore preciso senza perdere dati', async () => {
+  let writes = 0;
+  const original = { version: 1, users: [], teams: [] };
+  const token = 'token-fittizio-da-non-esporre';
+  const storage = new GitHubStore({ token, repository: 'test/cena', fetcher: async (url, options) => {
+    if (options.method === 'GET') return Response.json({ sha: 'original', content: Buffer.from(JSON.stringify(original)).toString('base64') });
+    writes++;
+    return Response.json({ message: 'Resource not accessible by personal access token' }, { status: 403 });
+  } });
+  const { server } = await createApp({ storage, adminPassword: password, ...adminConfig });
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const response = await handler(new Request('https://cena.example/api/auth/register', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(person())
+  }));
+  assert.equal(response.status, 503);
+  const result = await response.json();
+  assert.equal(result.code, 'GITHUB_WRITE_FORBIDDEN');
+  assert.ok(result.error.includes('Contents: Read and write'));
+  assert.ok(!JSON.stringify(result).includes(token));
+  assert.equal(writes, 1);
+  assert.deepEqual(await storage.read(), original);
+});
+
 test('il JSON corrotto non viene azzerato e il backup conserva la versione precedente', async t => {
   const directory = await mkdtemp(path.join(tmpdir(), 'cena-store-'));
   t.after(() => rm(directory, { recursive: true, force: true }));

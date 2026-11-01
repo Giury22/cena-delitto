@@ -57,6 +57,7 @@ export default async function handler(request, context) {
     return await adaptHandler(server.listeners('request')[0])(request, context);
   } catch (error) {
     console.error('Configurazione API:', error.message);
+    if (error.code?.startsWith('GITHUB_')) return Response.json({ error: error.message, code: error.code }, { status: error.status || 503, headers: { 'Cache-Control': 'no-store' } });
     return Response.json({ error: 'Il sito è in preparazione. L’organizzatore deve completare la configurazione di Netlify.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
   }
 }
