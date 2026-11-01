@@ -12,6 +12,18 @@
       "killerPreference": "yes",
       "attending": true,
       "createdAt": "2026-11-01T17:39:12.424Z"
+    },
+    {
+      "id": "fb6a34b4-ab0a-4754-a502-17681b0b6e7d",
+      "firstName": "anna",
+      "lastName": "soddu",
+      "nickname": "anna",
+      "passwordSalt": "53de468a620816208bede79a5d47ca4f",
+      "passwordHash": "fcffdcb9652dcdb8755bf3636871a355f5637c82f718fa0e1248659db4b39245",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-01T20:30:51.340Z"
     }
   ],
   "teams": [
