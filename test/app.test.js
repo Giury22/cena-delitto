@@ -8,8 +8,8 @@ import { JsonStore } from '../lib/store.js';
 import { GitHubStore } from '../lib/github-store.js';
 import netlifyHandler, { adaptHandler } from '../netlify/functions/api.mjs';
 
-const password = 'cenadelitto';
-const adminIdentity = { firstName: 'Andrea', lastName: 'Giurisato' };
+const password = 'prova';
+const adminIdentity = { firstName: 'OrganizzatoreTest', lastName: 'EsempioTest' };
 const adminConfig = { adminFirstName: adminIdentity.firstName, adminLastName: adminIdentity.lastName };
 async function fixture(t) {
   const directory = await mkdtemp(path.join(tmpdir(), 'cena-test-'));
@@ -120,7 +120,7 @@ test('amministrazione, CSV, controlli accesso, origine e sessione firmata', asyn
   assert.equal((await call('/api/auth/admin', 'POST', { ...adminIdentity, firstName: 'Altro', password })).status, 401);
   assert.equal((await call('/api/auth/admin', 'POST', { password })).status, 401);
   assert.equal((await call('/api/me', 'PATCH', { nickname: 'hacked' }, user.cookie, { Origin: 'https://altro.example' })).status, 403);
-  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, firstName: ' ANDREA ', lastName: 'giurisato', password });
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, firstName: ` ${adminIdentity.firstName.toUpperCase()} `, lastName: adminIdentity.lastName.toLowerCase(), password });
   assert.equal(admin.body.role, 'admin');
   assert.deepEqual(admin.body.admin, adminIdentity);
   assert.equal(admin.body.users[0].pinHash, undefined);
