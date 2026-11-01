@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16151d">
+  <meta name="description" content="Un posto a tavola, una squadra e un mistero da risolvere. Conferma la tua presenza alla cena con delitto.">
+  <title>Cena con delitto · Il tuo posto a tavola</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <script src="/app.js?v=4" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Vai al contenuto</a>
+  <header class="header"><a class="brand" href="/" aria-label="Cena con delitto, home"><span class="brand-mark" aria-hidden="true">c<span>·</span>d</span><span>Cena con delitto<small>UNA SERATA TRA AMICI</small></span></a><div id="header-actions"></div></header>
+  <main id="main" tabindex="-1"><div class="loading">Prepariamo il tuo posto a tavola…</div></main>
+  <footer><span>Buona compagnia. Cattive intenzioni.</span><button id="admin-link" class="text-button">Accesso organizzatore <span aria-hidden="true">↗</span></button></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="team-dialog" aria-labelledby="team-title"><form id="team-form"><div class="dialog-top"><span class="eyebrow">UN NUOVO INIZIO</span><button type="button" class="icon-button" id="close-dialog" aria-label="Chiudi">×</button></div><h2 id="team-title">Dai un nome alla tua squadra.</h2><p>Gli altri invitati potranno trovarla e unirsi a te.</p><label for="team-name">Nome della squadra</label><input id="team-name" name="name" maxlength="40" required placeholder="Come vi chiamerete?"><p class="form-error" id="team-error" role="alert"></p><button class="button primary full" type="submit">Crea la squadra <span aria-hidden="true">↗</span></button></form></dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
+    <form id="delete-form">
+      <span class="eyebrow">GESTIONE INVITATI E SQUADRE</span>
+      <h2 id="delete-title">Confermi l’eliminazione?</h2>
+      <p id="delete-description"></p>
+      <p class="form-error" id="delete-error" role="alert"></p>
+      <div class="delete-dialog-actions">
+        <button class="button outline" id="cancel-delete" type="button" autofocus>Annulla</button>
+        <button class="button danger" id="confirm-delete" type="submit">Elimina</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

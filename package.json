@@ -1,0 +1,9 @@
+{
+  "name": "cena-con-delitto",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Adesioni e squadre per una cena con delitto, con archivio JSON.",
+  "scripts": { "start": "node server.js", "dev": "node --watch server.js", "test": "node --test" },
+  "engines": { "node": ">=22" }
+}
