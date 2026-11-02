@@ -36,6 +36,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:08:24.036Z"
+    },
+    {
+      "id": "c92633c6-533d-4022-8e1d-efd960e36968",
+      "firstName": "Francesco",
+      "lastName": "Giurisato",
+      "nickname": "Cesco",
+      "passwordSalt": "3e4ba70f1a174d9a13d36ffe5ecefc41",
+      "passwordHash": "7be8aad9062442417b6b7118cc7d067c78f489f80cdb5ce695cfe6dc91cf5701",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:11:15.417Z"
     }
   ],
   "teams": [
