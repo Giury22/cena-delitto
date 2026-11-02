@@ -68,7 +68,7 @@
       "nickname": "charlie kirk",
       "passwordSalt": "0060c05e8271d0bac8c9d15205b79f51",
       "passwordHash": "143bffa3fe742aa0a7144555cbae3e47374ea8829d052661cdf0d6a4fdd9b0d1",
-      "teamId": null,
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:31:07.742Z"
