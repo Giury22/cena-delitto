@@ -24,6 +24,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-01T20:30:51.340Z"
+    },
+    {
+      "id": "e35a98c2-795a-479a-b340-b53411d614fd",
+      "firstName": "H h",
+      "lastName": "Hhc",
+      "nickname": "Hhcu",
+      "passwordSalt": "85c8a6b26c43a1a6e7ef09f5dc053c5e",
+      "passwordHash": "6edd5e606c3b88abc9a98a9fb8e7a785f15c05b9459fc430e396b980d96d969e",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T12:20:50.441Z"
     }
   ],
   "teams": [
