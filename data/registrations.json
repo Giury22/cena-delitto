@@ -24,6 +24,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-01T20:30:51.340Z"
+    },
+    {
+      "id": "75da3335-b362-4c4a-adf9-90c5c42845f8",
+      "firstName": "anna",
+      "lastName": "de franceschi",
+      "nickname": "nina",
+      "passwordSalt": "f116ec71bb6b1bbabf5e7261309b2b83",
+      "passwordHash": "f2da6730201865d2ba8687eab71c9987dd665efd587ae579b902aa89bb5874d6",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:08:24.036Z"
     }
   ],
   "teams": [
