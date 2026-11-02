@@ -24,6 +24,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-01T20:30:51.340Z"
+    },
+    {
+      "id": "a8f05c43-bfca-46b5-af6a-b13b74c1b1e4",
+      "firstName": "Jxjc",
+      "lastName": "Ndnfjc",
+      "nickname": "Fnjc",
+      "passwordSalt": "314273e4cec2700a61e69ada1e6d3d0d",
+      "passwordHash": "363aeca430b401adbfd986e35a13e872eadcf218c523e5014f4bd155f79f99f7",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T12:18:53.918Z"
     }
   ],
   "teams": [
