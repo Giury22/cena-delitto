@@ -96,6 +96,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:33:57.130Z"
+    },
+    {
+      "id": "8b9c7364-00a7-474f-9bd9-987b024ad80f",
+      "firstName": "Filippo",
+      "lastName": "Levorin",
+      "nickname": "Levo",
+      "passwordSalt": "676561b61c410fadc037e3b345ec37b9",
+      "passwordHash": "7ee796ee012975835f722777bc6f3cb84bbca8029c2c30f6300a2e245c676c5a",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T20:09:39.591Z"
     }
   ],
   "teams": [
