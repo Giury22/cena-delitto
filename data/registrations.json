@@ -20,7 +20,7 @@
       "nickname": "anna",
       "passwordSalt": "53de468a620816208bede79a5d47ca4f",
       "passwordHash": "fcffdcb9652dcdb8755bf3636871a355f5637c82f718fa0e1248659db4b39245",
-      "teamId": null,
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-01T20:30:51.340Z"
