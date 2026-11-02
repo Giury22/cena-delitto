@@ -41,6 +41,8 @@ Netlify serve la cartella `public` e le API sono Netlify Functions. Il filesyste
 
 I commit dei dati contengono `[skip netlify]`, così non viene ricostruito il sito a ogni adesione. Le modifiche al codice si pubblicano normalmente. Prima di aggiornare il codice dalla tua copia locale, esegui `git pull` per includere i commit delle adesioni e conservare il JSON più recente.
 
+`netlify.toml` esclude dalla scansione dei segreti soltanto `ADMIN_FIRST_NAME` e `ADMIN_LAST_NAME`: nome e cognome possono comparire legittimamente nelle adesioni. La scansione resta attiva per password, token e gli altri segreti, anche nel JSON dei partecipanti. Questa configurazione evita che un cognome coincidente blocchi il deploy; non modifica le credenziali o i dati salvati.
+
 Il token resta nel backend e non viene inviato al browser. Il JSON non è nella cartella pubblicata. Chi può leggere la repository può leggere i dati e gli hash delle password, come richiesto: mantieni privata la repository. La cronologia GitHub conserva anche le versioni precedenti.
 
 Questa soluzione è pensata per una cena tra amici: le API GitHub hanno limiti di utilizzo e frequenza. Un evento con molti accessi richiederebbe uno storage diverso. I dati locali e quelli GitHub restano separati; il server `npm start` usa sempre il file locale.

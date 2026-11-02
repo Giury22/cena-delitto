@@ -4,6 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Nome e cognome possono comparire nelle adesioni: non sono credenziali segrete.
+  SECRETS_SCAN_OMIT_KEYS = "ADMIN_FIRST_NAME,ADMIN_LAST_NAME"
 
 [functions]
   node_bundler = "esbuild"
