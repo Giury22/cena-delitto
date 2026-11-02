@@ -48,6 +48,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:11:15.417Z"
+    },
+    {
+      "id": "94b750f8-ffc2-4c2b-8489-e16d1be424e4",
+      "firstName": "Chiara",
+      "lastName": "Giurisato",
+      "nickname": "Chiara",
+      "passwordSalt": "e8a4609605acafd41c8ae8994961dd2f",
+      "passwordHash": "ccd8b16ad6d73e823456163cfdc40f2f5df579c3c247667439d1d19487cc804a",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:16:23.727Z"
     }
   ],
   "teams": [
