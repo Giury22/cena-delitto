@@ -72,6 +72,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:31:07.742Z"
+    },
+    {
+      "id": "826745d8-c83f-498a-bd06-d525855d5d6b",
+      "firstName": "Riccardo",
+      "lastName": "Mancini",
+      "nickname": "Riccardo",
+      "passwordSalt": "bb1899cd4b19de8a88877a1bc9438d85",
+      "passwordHash": "f484c2c93030d58551df16cab6ded2e6ab12d4fd12a7288711c16304667ec555",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:31:46.065Z"
     }
   ],
   "teams": [
