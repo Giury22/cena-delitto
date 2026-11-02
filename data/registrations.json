@@ -60,6 +60,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:16:23.727Z"
+    },
+    {
+      "id": "b6ba7e56-c5fb-4bd7-83e8-da085a9e2d09",
+      "firstName": "Leonardo",
+      "lastName": "Bernardi",
+      "nickname": "charlie kirk",
+      "passwordSalt": "0060c05e8271d0bac8c9d15205b79f51",
+      "passwordHash": "143bffa3fe742aa0a7144555cbae3e47374ea8829d052661cdf0d6a4fdd9b0d1",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:31:07.742Z"
     }
   ],
   "teams": [
