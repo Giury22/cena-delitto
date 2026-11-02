@@ -153,6 +153,83 @@ test('colore squadra obbligatorio, condiviso, persistente e modificabile solo da
   assert.equal(updated.body.user.teamId, teamId);
 });
 
+test('colori esclusivi anche con richieste simultanee e liberati dopo cambio o eliminazione', async t => {
+  const { call, dataFile } = await fixture(t);
+  const a = await call('/api/auth/register', 'POST', person('Prima'));
+  const b = await call('/api/auth/register', 'POST', person('Seconda'));
+  const created = await Promise.all([
+    call('/api/teams', 'POST', { name: 'Prima squadra', color: 'orange' }, a.cookie),
+    call('/api/teams', 'POST', { name: 'Seconda squadra', color: 'orange' }, b.cookie)
+  ]);
+  assert.deepEqual(created.map(result => result.status).sort(), [200, 409]);
+  assert.match(created.find(result => result.status === 409).body.error, /colore.*già stato scelto/);
+  const winner = created[0].status === 200 ? a : b;
+  const loser = created[0].status === 200 ? b : a;
+  assert.equal((await call('/api/state', 'GET', undefined, loser.cookie)).body.user.teamId, null);
+  const second = await call('/api/teams', 'POST', { name: 'Altra squadra', color: 'blue' }, loser.cookie);
+  assert.equal(second.status, 200);
+  const blocked = await call('/api/team/color', 'PATCH', { color: 'orange' }, loser.cookie);
+  assert.equal(blocked.status, 409);
+  const unchanged = (await call('/api/state', 'GET', undefined, loser.cookie)).body;
+  assert.equal(unchanged.teams.find(team => team.id === unchanged.user.teamId).color, 'blue');
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'blue' }, loser.cookie)).status, 200);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'green' }, winner.cookie)).status, 200);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'orange' }, loser.cookie)).status, 200);
+  const c = await call('/api/auth/register', 'POST', person('Terza'));
+  const third = await call('/api/teams', 'POST', { name: 'Terza squadra', color: 'blue' }, c.cookie);
+  assert.equal(third.status, 200);
+  await call('/api/team', 'PATCH', { teamId: null }, c.cookie);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'blue' }, winner.cookie)).status, 409);
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  assert.equal((await call(`/api/admin/teams/${third.body.user.teamId}`, 'DELETE', {}, admin.cookie)).status, 200);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'blue' }, winner.cookie)).status, 200);
+  const changed = await Promise.all([
+    call('/api/team/color', 'PATCH', { color: 'purple' }, winner.cookie),
+    call('/api/team/color', 'PATCH', { color: 'purple' }, loser.cookie)
+  ]);
+  assert.deepEqual(changed.map(result => result.status).sort(), [200, 409]);
+  const saved = JSON.parse(await readFile(dataFile, 'utf8'));
+  assert.equal(saved.teams.length, 2);
+  assert.equal(new Set(saved.teams.map(team => team.color)).size, 2);
+});
+
+test('GitHub rifiuta il colore se un’altra istanza lo occupa prima del salvataggio', async () => {
+  let data = { version: 1, users: [], teams: [] };
+  let revision = 1;
+  let conflict = false;
+  let conflictingWrites = 0;
+  const storage = new GitHubStore({ token: 'test-token', repository: 'test/cena', fetcher: async (url, options) => {
+    if (options.method === 'GET') return Response.json({ sha: String(revision), content: Buffer.from(JSON.stringify(data)).toString('base64') });
+    if (conflict) {
+      conflict = false; conflictingWrites++;
+      data.teams.push({ id: 'remote', name: 'Squadra da un’altra istanza', color: 'red' });
+      revision++;
+      return Response.json({}, { status: 409 });
+    }
+    const body = JSON.parse(options.body);
+    assert.equal(body.sha, String(revision));
+    data = JSON.parse(Buffer.from(body.content, 'base64').toString('utf8'));
+    revision++;
+    return Response.json({}, { status: 200 });
+  } });
+  const { server } = await createApp({ storage, adminPassword: password, ...adminConfig });
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const registered = await handler(new Request('https://cena.example/api/auth/register', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(person())
+  }));
+  assert.equal(registered.status, 200);
+  const cookie = registered.headers.get('set-cookie').split(';')[0];
+  conflict = true;
+  const response = await handler(new Request('https://cena.example/api/teams', {
+    method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Squadra locale', color: 'red' })
+  }));
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).error, /colore.*già stato scelto/);
+  assert.equal(conflictingWrites, 1);
+  assert.deepEqual(data.teams.map(team => team.id), ['remote']);
+  assert.equal(data.users[0].teamId, null);
+});
+
 test('amministrazione, CSV, controlli accesso, origine e sessione firmata', async t => {
   const { call } = await fixture(t);
   const user = await call('/api/auth/register', 'POST', { ...person(), nickname: '=1+1' });

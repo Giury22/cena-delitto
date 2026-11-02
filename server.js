@@ -14,8 +14,9 @@ const nameKey = (first, last) => JSON.stringify([normalized(first), normalized(l
 const hashToken = value => createHash('sha256').update(value).digest('hex');
 const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, ...user }) => user;
 class ApiError extends Error { constructor(status, message) { super(message); this.status = status; } }
-function teamColor(value) {
+function teamColor(value, teams, teamId = null) {
   if (typeof value !== 'string' || !Object.hasOwn(teamColors, value)) throw new ApiError(400, 'Scegli un colore per la squadra.');
+  if (teams.some(team => team.id !== teamId && team.color === value)) throw new ApiError(409, 'Questo colore è già stato scelto da un’altra squadra. Scegline uno disponibile.');
   return value;
 }
 function field(value, label, max = 60) {
@@ -200,14 +201,14 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
           }
         } else if (req.method === 'POST' && url.pathname === '/api/teams') {
           const name = field(body.name, 'Nome squadra', 40);
-          const color = teamColor(body.color);
+          const color = teamColor(body.color, data.teams);
           if (data.teams.some(team => normalized(team.name) === normalized(name))) throw new ApiError(409, 'Questo nome squadra è già in uso.');
           const team = { id: randomUUID(), name, color, createdBy: user.id, createdAt: new Date().toISOString() };
           data.teams.push(team); user.teamId = team.id;
         } else if (req.method === 'PATCH' && url.pathname === '/api/team/color') {
           const team = data.teams.find(item => item.id === user.teamId);
           if (!team) throw new ApiError(403, 'Unisciti a una squadra per sceglierne il colore.');
-          team.color = teamColor(body.color);
+          team.color = teamColor(body.color, data.teams, team.id);
         } else if (req.method === 'PATCH' && url.pathname === '/api/team') {
           if (body.teamId !== null && !data.teams.some(team => team.id === body.teamId)) throw new ApiError(404, 'Squadra non trovata.');
           user.teamId = body.teamId;
