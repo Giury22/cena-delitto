@@ -32,7 +32,7 @@
       "nickname": "nina",
       "passwordSalt": "f116ec71bb6b1bbabf5e7261309b2b83",
       "passwordHash": "f2da6730201865d2ba8687eab71c9987dd665efd587ae579b902aa89bb5874d6",
-      "teamId": null,
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:08:24.036Z"
@@ -45,6 +45,13 @@
       "createdBy": "e343e2ee-810b-4509-85fa-0a5335d6403f",
       "createdAt": "2026-11-01T17:39:40.151Z",
       "color": "red"
+    },
+    {
+      "id": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
+      "name": "bombaaa",
+      "color": "purple",
+      "createdBy": "75da3335-b362-4c4a-adf9-90c5c42845f8",
+      "createdAt": "2026-11-02T13:09:43.541Z"
     }
   ]
 }
