@@ -1,5 +1,49 @@
 {
   "version": 1,
-  "users": [],
-  "teams": []
+  "users": [
+    {
+      "id": "e343e2ee-810b-4509-85fa-0a5335d6403f",
+      "firstName": "Anna",
+      "lastName": "Giurisato",
+      "nickname": "😬😬😬😬😬",
+      "passwordSalt": "0727707312fed0ed7309c94b99e562d9",
+      "passwordHash": "adeac0249a1dd334b2e4689db29e5b39ad62a04928c3bf757197af4f60f6bc63",
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
+      "killerPreference": "yes",
+      "attending": true,
+      "createdAt": "2026-11-01T17:39:12.424Z"
+    },
+    {
+      "id": "fb6a34b4-ab0a-4754-a502-17681b0b6e7d",
+      "firstName": "anna",
+      "lastName": "soddu",
+      "nickname": "anna",
+      "passwordSalt": "53de468a620816208bede79a5d47ca4f",
+      "passwordHash": "fcffdcb9652dcdb8755bf3636871a355f5637c82f718fa0e1248659db4b39245",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-01T20:30:51.340Z"
+    },
+    {
+      "id": "e35a98c2-795a-479a-b340-b53411d614fd",
+      "firstName": "H h",
+      "lastName": "Hhc",
+      "nickname": "Hhcu",
+      "passwordSalt": "85c8a6b26c43a1a6e7ef09f5dc053c5e",
+      "passwordHash": "6edd5e606c3b88abc9a98a9fb8e7a785f15c05b9459fc430e396b980d96d969e",
+      "teamId": null,
+      "killerPreference": "no",
+      "attending": true,
+      "createdAt": "2026-11-02T12:20:50.441Z"
+    }
+  ],
+  "teams": [
+    {
+      "id": "e35b97bd-98be-4696-a552-72615c474322",
+      "name": "Crazy team",
+      "createdBy": "e343e2ee-810b-4509-85fa-0a5335d6403f",
+      "createdAt": "2026-11-01T17:39:40.151Z"
+    }
+  ]
 }
