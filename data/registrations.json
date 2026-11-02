@@ -26,16 +26,16 @@
       "createdAt": "2026-11-01T20:30:51.340Z"
     },
     {
-      "id": "e35a98c2-795a-479a-b340-b53411d614fd",
-      "firstName": "H h",
-      "lastName": "Hhc",
-      "nickname": "Hhcu",
-      "passwordSalt": "85c8a6b26c43a1a6e7ef09f5dc053c5e",
-      "passwordHash": "6edd5e606c3b88abc9a98a9fb8e7a785f15c05b9459fc430e396b980d96d969e",
-      "teamId": null,
-      "killerPreference": "no",
+      "id": "1a0ef600-aa62-4624-8f5e-c97514c5b223",
+      "firstName": "Cjjc",
+      "lastName": "Vg",
+      "nickname": "Ggg",
+      "passwordSalt": "f9490100d5b50da8b52279b491f54a45",
+      "passwordHash": "adb8b16d4aefd160bc1b14373c4cb11bcf643589a0568b74350bf2f6cbcbffb2",
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
+      "killerPreference": "undecided",
       "attending": true,
-      "createdAt": "2026-11-02T12:20:50.441Z"
+      "createdAt": "2026-11-02T12:32:48.261Z"
     }
   ],
   "teams": [
@@ -43,7 +43,15 @@
       "id": "e35b97bd-98be-4696-a552-72615c474322",
       "name": "Crazy team",
       "createdBy": "e343e2ee-810b-4509-85fa-0a5335d6403f",
-      "createdAt": "2026-11-01T17:39:40.151Z"
+      "createdAt": "2026-11-01T17:39:40.151Z",
+      "color": "orange"
+    },
+    {
+      "id": "ea078ed4-d258-4fa7-b027-9de929e38d64",
+      "name": "Bnj",
+      "color": "orange",
+      "createdBy": "1a0ef600-aa62-4624-8f5e-c97514c5b223",
+      "createdAt": "2026-11-02T12:33:02.237Z"
     }
   ]
 }
