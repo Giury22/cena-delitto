@@ -84,6 +84,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:31:46.065Z"
+    },
+    {
+      "id": "8fb6e758-a93f-48b1-85f3-496b8d9bfd3f",
+      "firstName": "Giulia",
+      "lastName": "Zennari",
+      "nickname": "Giulia",
+      "passwordSalt": "f656808dca5c4201fcd8e50e2c9d17f2",
+      "passwordHash": "9e0f504668d42f2fe7c5114de427e7d2d928aec5bd380e2106fb1274a35862d0",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:33:57.130Z"
     }
   ],
   "teams": [
