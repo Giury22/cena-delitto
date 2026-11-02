@@ -5,6 +5,7 @@ import path from 'node:path';
 import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual, createHash, createHmac } from 'node:crypto';
 import { promisify } from 'node:util';
 import { JsonStore } from './lib/store.js';
+import { teamColors, teamColorLabel } from './public/team-colors.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const scrypt = promisify(scryptCallback);
@@ -13,6 +14,10 @@ const nameKey = (first, last) => JSON.stringify([normalized(first), normalized(l
 const hashToken = value => createHash('sha256').update(value).digest('hex');
 const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, ...user }) => user;
 class ApiError extends Error { constructor(status, message) { super(message); this.status = status; } }
+function teamColor(value) {
+  if (typeof value !== 'string' || !Object.hasOwn(teamColors, value)) throw new ApiError(400, 'Scegli un colore per la squadra.');
+  return value;
+}
 function field(value, label, max = 60) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > max || /[\u0000-\u001f\u007f]/.test(value)) throw new ApiError(400, `${label}: inserisci da 1 a ${max} caratteri.`);
   return value.normalize('NFKC').trim().replace(/\s+/g, ' ');
@@ -92,7 +97,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
     try {
       const url = new URL(req.url, 'http://localhost');
       if (!url.pathname.startsWith('/api/')) {
-        const files = { '/': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/styles.css': ['styles.css', 'text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'] };
+        const files = { '/': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/team-colors.js': ['team-colors.js', 'text/javascript; charset=utf-8'], '/styles.css': ['styles.css', 'text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'] };
         if (!['GET', 'HEAD'].includes(req.method) || !files[url.pathname]) throw new ApiError(404, 'Pagina non trovata.');
         const [file, type] = files[url.pathname];
         const content = await readFile(path.join(root, 'public', file));
@@ -151,7 +156,10 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
         const data = await store.read();
         const cell = value => `"${String(value ?? '').replace(/^[=+@\-\t\r]/, "'$&").replaceAll('"', '""')}"`;
         const preference = { yes: 'Disponibile', no: 'Preferisce di no', undecided: 'Indifferente' };
-        const rows = [['Nome', 'Cognome', 'Soprannome', 'Squadra', 'Partecipazione', 'Assassino'], ...data.users.map(user => [user.firstName, user.lastName, user.nickname, data.teams.find(team => team.id === user.teamId)?.name || '', user.attending ? 'Confermata' : 'Rinunciata', preference[user.killerPreference]])];
+        const rows = [['Nome', 'Cognome', 'Soprannome', 'Squadra', 'Partecipazione', 'Assassino', 'Colore squadra'], ...data.users.map(user => {
+          const team = data.teams.find(team => team.id === user.teamId);
+          return [user.firstName, user.lastName, user.nickname, team?.name || '', user.attending ? 'Confermata' : 'Rinunciata', preference[user.killerPreference], team ? teamColorLabel(team.color) : ''];
+        })];
         res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="partecipanti.csv"' });
         res.end('\uFEFF' + rows.map(row => row.map(cell).join(';')).join('\r\n')); return;
       }
@@ -192,9 +200,14 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
           }
         } else if (req.method === 'POST' && url.pathname === '/api/teams') {
           const name = field(body.name, 'Nome squadra', 40);
+          const color = teamColor(body.color);
           if (data.teams.some(team => normalized(team.name) === normalized(name))) throw new ApiError(409, 'Questo nome squadra è già in uso.');
-          const team = { id: randomUUID(), name, createdBy: user.id, createdAt: new Date().toISOString() };
+          const team = { id: randomUUID(), name, color, createdBy: user.id, createdAt: new Date().toISOString() };
           data.teams.push(team); user.teamId = team.id;
+        } else if (req.method === 'PATCH' && url.pathname === '/api/team/color') {
+          const team = data.teams.find(item => item.id === user.teamId);
+          if (!team) throw new ApiError(403, 'Unisciti a una squadra per sceglierne il colore.');
+          team.color = teamColor(body.color);
         } else if (req.method === 'PATCH' && url.pathname === '/api/team') {
           if (body.teamId !== null && !data.teams.some(team => team.id === body.teamId)) throw new ApiError(404, 'Squadra non trovata.');
           user.teamId = body.teamId;

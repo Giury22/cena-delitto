@@ -148,6 +148,26 @@ fieldset .input-help { margin: 7px 0 14px; }
 .current-team h3 { margin-top: 9px; }
 .current-team p { color: #c3d0b6; font-size: 12px; margin-top: 7px; }
 .current-team .button { font-size: 11px; padding: 8px 12px; white-space: nowrap; }
+.current-team > div { min-width: 0; flex: 1; }
+.current-team h3 { overflow-wrap: anywhere; }
+.team-color { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 12px; color: var(--ink); letter-spacing: normal; }
+.color-swatch { display: inline-block; flex: 0 0 16px; width: 16px; height: 16px; border: 1px solid #bcb7c8; border-radius: 50%; background: transparent; }
+.color-swatch[data-color=red] { background: #ef4444; }
+.color-swatch[data-color=orange] { background: #f97316; }
+.color-swatch[data-color=yellow] { background: #facc15; }
+.color-swatch[data-color=green] { background: #22c55e; }
+.color-swatch[data-color=blue] { background: #3b65dc; }
+.color-swatch[data-color=cyan] { background: #38bdf8; }
+.color-swatch[data-color=purple] { background: #a855f7; }
+.color-swatch[data-color=pink] { background: #f472b6; }
+.color-swatch[data-color=brown] { background: #925a35; }
+.color-swatch[data-color=white] { background: #ffffff; }
+.color-swatch[data-color=black] { background: #101010; }
+.color-swatch[data-color=gray] { background: #9ca3af; }
+.color-label, #team-color-form label { margin-top: 18px; }
+.team-color-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+.team-color-controls select { flex: 1 1 130px; width: auto; }
+.team-color-controls .button { flex: 0 0 auto; }
 .no-team { display: flex; align-items: center; gap: 17px; padding: 18px 20px; background: #30273e; border: 1px solid #64517d; border-radius: 13px; margin-bottom: 24px; }
 .no-team>span { font-family: var(--serif); font-size: 32px; color: var(--lilac); }
 .no-team p { font-size: 12px; color: #c8bcd9; }

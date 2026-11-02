@@ -89,10 +89,10 @@ test('squadre, modifiche simultanee e preferenze private', async t => {
   const { call, dataFile } = await fixture(t);
   const a = await call('/api/auth/register', 'POST', person('Anna'));
   const b = await call('/api/auth/register', 'POST', person('Luca'));
-  const created = await call('/api/teams', 'POST', { name: 'I sospetti' }, a.cookie);
+  const created = await call('/api/teams', 'POST', { name: 'I sospetti', color: 'red' }, a.cookie);
   const teamId = created.body.user.teamId;
   assert.equal(created.body.teams.length, 1);
-  assert.equal((await call('/api/teams', 'POST', { name: ' i SOSPETTI ' }, b.cookie)).status, 409);
+  assert.equal((await call('/api/teams', 'POST', { name: ' i SOSPETTI ', color: 'blue' }, b.cookie)).status, 409);
   const updates = await Promise.all([
     call('/api/me', 'PATCH', { nickname: 'Ombra', killerPreference: 'yes' }, a.cookie),
     call('/api/team', 'PATCH', { teamId }, b.cookie)
@@ -109,6 +109,48 @@ test('squadre, modifiche simultanee e preferenze private', async t => {
   const left = await call('/api/team', 'PATCH', { teamId: null }, b.cookie);
   assert.equal(left.body.user.teamId, null);
   assert.equal((await call('/api/me', 'PATCH', { attending: false }, a.cookie)).body.user.attending, false);
+});
+
+test('colore squadra obbligatorio, condiviso, persistente e modificabile solo dai membri', async t => {
+  const { call, dataFile, store, server } = await fixture(t);
+  const owner = await call('/api/auth/register', 'POST', person('Caposquadra'));
+  const member = await call('/api/auth/register', 'POST', person('Complice'));
+  const outsider = await call('/api/auth/register', 'POST', person('Esterno'));
+  for (const color of [undefined, '', null, 123, 'invalid', '__proto__']) {
+    assert.equal((await call('/api/teams', 'POST', { name: 'I colorati', color }, owner.cookie)).status, 400);
+  }
+  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).teams.length, 0);
+  const created = await call('/api/teams', 'POST', { name: 'I colorati', color: 'red' }, owner.cookie);
+  assert.equal(created.status, 200);
+  const teamId = created.body.user.teamId;
+  assert.equal(created.body.teams[0].color, 'red');
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'blue' })).status, 401);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'blue', teamId }, outsider.cookie)).status, 403);
+  await call('/api/team', 'PATCH', { teamId }, member.cookie);
+  assert.equal((await call('/api/team/color', 'PATCH', { color: 'invalid' }, member.cookie)).status, 400);
+  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).teams[0].color, 'red');
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const response = await handler(new Request('https://cena.example/api/team/color', {
+    method: 'PATCH', headers: { Cookie: member.cookie, 'Content-Type': 'application/json' }, body: JSON.stringify({ color: 'blue' })
+  }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).teams[0].color, 'blue');
+  assert.equal((await call('/api/state', 'GET', undefined, owner.cookie)).body.teams[0].color, 'blue');
+  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).teams[0].color, 'blue');
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  assert.equal(admin.body.teams[0].color, 'blue');
+  const csv = await call('/api/admin/export', 'GET', undefined, admin.cookie);
+  assert.ok(csv.body.includes('Colore squadra'));
+  assert.ok(csv.body.includes('"Blu"'));
+  assert.equal((await call('/team-colors.js')).status, 200);
+  // Le squadre precedenti restano intatte finché un membro sceglie il colore.
+  await store.mutate(data => { delete data.teams[0].color; });
+  assert.equal((await call('/api/state', 'GET', undefined, owner.cookie)).status, 200);
+  assert.ok((await call('/api/admin/export', 'GET', undefined, admin.cookie)).body.includes('Da scegliere'));
+  const updated = await call('/api/team/color', 'PATCH', { color: 'green' }, member.cookie);
+  assert.equal(updated.status, 200);
+  assert.equal(updated.body.teams[0].color, 'green');
+  assert.equal(updated.body.user.teamId, teamId);
 });
 
 test('amministrazione, CSV, controlli accesso, origine e sessione firmata', async t => {
@@ -143,7 +185,7 @@ test('solo admin elimina profili: rimuove appartenenza, accesso e riferimenti al
   const { call, dataFile } = await fixture(t);
   const owner = await call('/api/auth/register', 'POST', person('Creatore'));
   const member = await call('/api/auth/register', 'POST', person('Membro'));
-  const created = await call('/api/teams', 'POST', { name: 'Squadra da conservare' }, owner.cookie);
+  const created = await call('/api/teams', 'POST', { name: 'Squadra da conservare', color: 'green' }, owner.cookie);
   const teamId = created.body.user.teamId;
   await call('/api/team', 'PATCH', { teamId }, member.cookie);
   const target = `/api/admin/users/${owner.body.user.id}`;
@@ -174,8 +216,8 @@ test('eliminare una squadra da Netlify conserva membri e altri gruppi e azzera l
   const a = await call('/api/auth/register', 'POST', person('Anna'));
   const b = await call('/api/auth/register', 'POST', person('Bruno'));
   const c = await call('/api/auth/register', 'POST', person('Carla'));
-  const first = await call('/api/teams', 'POST', { name: 'Da eliminare' }, a.cookie);
-  const second = await call('/api/teams', 'POST', { name: 'Da tenere' }, c.cookie);
+  const first = await call('/api/teams', 'POST', { name: 'Da eliminare', color: 'red' }, a.cookie);
+  const second = await call('/api/teams', 'POST', { name: 'Da tenere', color: 'blue' }, c.cookie);
   await call('/api/team', 'PATCH', { teamId: first.body.user.teamId }, b.cookie);
   await call('/api/me', 'PATCH', { attending: false }, b.cookie);
   const target = `/api/admin/teams/${first.body.user.teamId}`;
