@@ -129,7 +129,7 @@
       "passwordSalt": "332ac6cec530dc2336ac608f1269cc3a",
       "passwordHash": "88927c91fde0826530a9d06c542ba6d9f0a2b8269923ee77304b6df4ddaf5b15",
       "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
-      "killerPreference": "no",
+      "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-05T13:48:54.962Z"
     },
