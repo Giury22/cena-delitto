@@ -140,7 +140,7 @@
       "nickname": "Irene",
       "passwordSalt": "5298bfde2213367db416883597dae6a5",
       "passwordHash": "cb3b32b3439683076e904e5ecf9dd0faf7428883af04c30e1df618a6977ddf6b",
-      "teamId": null,
+      "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-05T13:52:28.118Z"
