@@ -80,7 +80,7 @@
       "nickname": "Riccardo",
       "passwordSalt": "bb1899cd4b19de8a88877a1bc9438d85",
       "passwordHash": "f484c2c93030d58551df16cab6ded2e6ab12d4fd12a7288711c16304667ec555",
-      "teamId": null,
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:31:46.065Z"
