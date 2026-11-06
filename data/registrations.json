@@ -144,6 +144,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-05T13:52:28.118Z"
+    },
+    {
+      "id": "35d6bf28-88bd-475c-aeff-5d5e777abad8",
+      "firstName": "federico",
+      "lastName": "staffoni",
+      "nickname": "Pota",
+      "passwordSalt": "edf4278b2c719282388eab9de9ed5a17",
+      "passwordHash": "1f3e52339299b42501059df04553cd8c63d17e5ad61f7d870f251e79c3f69518",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-06T11:19:32.408Z"
     }
   ],
   "teams": [
