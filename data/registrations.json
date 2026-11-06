@@ -156,6 +156,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-06T11:19:32.408Z"
+    },
+    {
+      "id": "63a13280-f940-429c-a3f1-15aac5bf23a6",
+      "firstName": "Mariasole",
+      "lastName": "Raffaelli",
+      "nickname": "Mariasole",
+      "passwordSalt": "655a1d3b5f37aee284e62f750a3f948f",
+      "passwordHash": "b7cd88c90bb1bbd69c90787c8e804548470aceb433854db2e1747374c9dade21",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-06T13:27:22.725Z"
     }
   ],
   "teams": [
