@@ -168,6 +168,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-06T13:27:22.725Z"
+    },
+    {
+      "id": "1783a46b-cefa-4bc3-8d66-c95d1df8331d",
+      "firstName": "Giovanni",
+      "lastName": "Colcone",
+      "nickname": "Giovanni",
+      "passwordSalt": "e48775979ca856dbb4d9adfef95fb517",
+      "passwordHash": "8cf9454874edd1a65b428678bfd447aa387b0a4b631d0a9fe9c05361a7fb76b1",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-06T13:28:58.285Z"
     }
   ],
   "teams": [
