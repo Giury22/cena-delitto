@@ -152,7 +152,7 @@
       "nickname": "Pota",
       "passwordSalt": "edf4278b2c719282388eab9de9ed5a17",
       "passwordHash": "1f3e52339299b42501059df04553cd8c63d17e5ad61f7d870f251e79c3f69518",
-      "teamId": null,
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-06T11:19:32.408Z"
