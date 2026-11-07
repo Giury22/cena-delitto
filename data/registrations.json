@@ -185,11 +185,11 @@
       "id": "c91a8f60-aa30-4c73-9d37-c402fd1f4441",
       "firstName": "Giovanni",
       "lastName": "Colcone",
-      "nickname": "Giovanni",
+      "nickname": "Giò",
       "passwordSalt": "0860d82f732eae1012ae0fc868b89d4b",
       "passwordHash": "86f46182797c1e0ba72e863123a9bb0252b326bbc223aafbb2c456957ed296a6",
       "teamId": null,
-      "killerPreference": "undecided",
+      "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-07T07:33:02.452Z"
     }
