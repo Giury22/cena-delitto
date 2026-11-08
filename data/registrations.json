@@ -200,7 +200,7 @@
       "nickname": "Hyce",
       "passwordSalt": "4d646a68fef4efe6aca7e04d95965620",
       "passwordHash": "c27cb1b4a2348fa8edc0fe744b32b978715f10bcf59726b1f51cbf03753d09c2",
-      "teamId": null,
+      "teamId": "d5a1f5a6-c0c2-44ed-a100-482b9f93e1ea",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-08T11:33:02.804Z"
@@ -227,6 +227,13 @@
       "color": "white",
       "createdBy": "03757a61-5076-4629-9420-2e1649129c5d",
       "createdAt": "2026-11-05T13:52:07.562Z"
+    },
+    {
+      "id": "d5a1f5a6-c0c2-44ed-a100-482b9f93e1ea",
+      "name": "Samoiedi",
+      "color": "blue",
+      "createdBy": "0af8f0c2-eab0-4f1e-880b-3ce319df3ff7",
+      "createdAt": "2026-11-08T11:48:27.857Z"
     }
   ]
 }
