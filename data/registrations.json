@@ -20,22 +20,202 @@
       "nickname": "anna",
       "passwordSalt": "53de468a620816208bede79a5d47ca4f",
       "passwordHash": "fcffdcb9652dcdb8755bf3636871a355f5637c82f718fa0e1248659db4b39245",
-      "teamId": null,
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-01T20:30:51.340Z"
     },
     {
-      "id": "1a0ef600-aa62-4624-8f5e-c97514c5b223",
-      "firstName": "Cjjc",
-      "lastName": "Vg",
-      "nickname": "Ggg",
-      "passwordSalt": "f9490100d5b50da8b52279b491f54a45",
-      "passwordHash": "adb8b16d4aefd160bc1b14373c4cb11bcf643589a0568b74350bf2f6cbcbffb2",
+      "id": "75da3335-b362-4c4a-adf9-90c5c42845f8",
+      "firstName": "anna",
+      "lastName": "de franceschi",
+      "nickname": "nina",
+      "passwordSalt": "f116ec71bb6b1bbabf5e7261309b2b83",
+      "passwordHash": "f2da6730201865d2ba8687eab71c9987dd665efd587ae579b902aa89bb5874d6",
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:08:24.036Z"
+    },
+    {
+      "id": "c92633c6-533d-4022-8e1d-efd960e36968",
+      "firstName": "Francesco",
+      "lastName": "Giurisato",
+      "nickname": "Cesco",
+      "passwordSalt": "3e4ba70f1a174d9a13d36ffe5ecefc41",
+      "passwordHash": "7be8aad9062442417b6b7118cc7d067c78f489f80cdb5ce695cfe6dc91cf5701",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:11:15.417Z"
+    },
+    {
+      "id": "94b750f8-ffc2-4c2b-8489-e16d1be424e4",
+      "firstName": "Chiara",
+      "lastName": "Giurisato",
+      "nickname": "Chiara",
+      "passwordSalt": "e8a4609605acafd41c8ae8994961dd2f",
+      "passwordHash": "ccd8b16ad6d73e823456163cfdc40f2f5df579c3c247667439d1d19487cc804a",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:16:23.727Z"
+    },
+    {
+      "id": "b6ba7e56-c5fb-4bd7-83e8-da085a9e2d09",
+      "firstName": "Leonardo",
+      "lastName": "Bernardi",
+      "nickname": "charlie kirk",
+      "passwordSalt": "0060c05e8271d0bac8c9d15205b79f51",
+      "passwordHash": "143bffa3fe742aa0a7144555cbae3e47374ea8829d052661cdf0d6a4fdd9b0d1",
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:31:07.742Z"
+    },
+    {
+      "id": "826745d8-c83f-498a-bd06-d525855d5d6b",
+      "firstName": "Riccardo",
+      "lastName": "Mancini",
+      "nickname": "Riccardo",
+      "passwordSalt": "bb1899cd4b19de8a88877a1bc9438d85",
+      "passwordHash": "f484c2c93030d58551df16cab6ded2e6ab12d4fd12a7288711c16304667ec555",
       "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "undecided",
       "attending": true,
-      "createdAt": "2026-11-02T12:32:48.261Z"
+      "createdAt": "2026-11-02T13:31:46.065Z"
+    },
+    {
+      "id": "8fb6e758-a93f-48b1-85f3-496b8d9bfd3f",
+      "firstName": "Giulia",
+      "lastName": "Zennari",
+      "nickname": "Giulia",
+      "passwordSalt": "f656808dca5c4201fcd8e50e2c9d17f2",
+      "passwordHash": "9e0f504668d42f2fe7c5114de427e7d2d928aec5bd380e2106fb1274a35862d0",
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T13:33:57.130Z"
+    },
+    {
+      "id": "8b9c7364-00a7-474f-9bd9-987b024ad80f",
+      "firstName": "Filippo",
+      "lastName": "Levorin",
+      "nickname": "Levo",
+      "passwordSalt": "676561b61c410fadc037e3b345ec37b9",
+      "passwordHash": "7ee796ee012975835f722777bc6f3cb84bbca8029c2c30f6300a2e245c676c5a",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-02T20:09:39.591Z"
+    },
+    {
+      "id": "75706dc9-3b28-4f82-ac21-390bf54ea3ee",
+      "firstName": "Francesca",
+      "lastName": "Zocca",
+      "nickname": "Fra",
+      "passwordSalt": "03709aca1957d95dd6bee622714b3e97",
+      "passwordHash": "532d15d00acfd4cba8ebbf40e325f81b075e72b221a954879e48a7dd8550c7b5",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-03T11:16:06.734Z"
+    },
+    {
+      "id": "03757a61-5076-4629-9420-2e1649129c5d",
+      "firstName": "Giorgia",
+      "lastName": "Varotto",
+      "nickname": "Giorgitas",
+      "passwordSalt": "332ac6cec530dc2336ac608f1269cc3a",
+      "passwordHash": "88927c91fde0826530a9d06c542ba6d9f0a2b8269923ee77304b6df4ddaf5b15",
+      "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-05T13:48:54.962Z"
+    },
+    {
+      "id": "45eb1c07-e740-4160-8a75-432bdbf99d06",
+      "firstName": "Irene",
+      "lastName": "Taddia",
+      "nickname": "Irene",
+      "passwordSalt": "5298bfde2213367db416883597dae6a5",
+      "passwordHash": "cb3b32b3439683076e904e5ecf9dd0faf7428883af04c30e1df618a6977ddf6b",
+      "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-05T13:52:28.118Z"
+    },
+    {
+      "id": "35d6bf28-88bd-475c-aeff-5d5e777abad8",
+      "firstName": "federico",
+      "lastName": "staffoni",
+      "nickname": "Pota",
+      "passwordSalt": "edf4278b2c719282388eab9de9ed5a17",
+      "passwordHash": "1f3e52339299b42501059df04553cd8c63d17e5ad61f7d870f251e79c3f69518",
+      "teamId": "e35b97bd-98be-4696-a552-72615c474322",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-06T11:19:32.408Z"
+    },
+    {
+      "id": "63a13280-f940-429c-a3f1-15aac5bf23a6",
+      "firstName": "Mariasole",
+      "lastName": "Raffaelli",
+      "nickname": "Sole",
+      "passwordSalt": "655a1d3b5f37aee284e62f750a3f948f",
+      "passwordHash": "b7cd88c90bb1bbd69c90787c8e804548470aceb433854db2e1747374c9dade21",
+      "teamId": null,
+      "killerPreference": "no",
+      "attending": true,
+      "createdAt": "2026-11-06T13:27:22.725Z"
+    },
+    {
+      "id": "1783a46b-cefa-4bc3-8d66-c95d1df8331d",
+      "firstName": "Giovanni",
+      "lastName": "Colcone",
+      "nickname": "Giovanni",
+      "passwordSalt": "e48775979ca856dbb4d9adfef95fb517",
+      "passwordHash": "8cf9454874edd1a65b428678bfd447aa387b0a4b631d0a9fe9c05361a7fb76b1",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-06T13:28:58.285Z"
+    },
+    {
+      "id": "c91a8f60-aa30-4c73-9d37-c402fd1f4441",
+      "firstName": "Giovanni",
+      "lastName": "Colcone",
+      "nickname": "Giò",
+      "passwordSalt": "0860d82f732eae1012ae0fc868b89d4b",
+      "passwordHash": "86f46182797c1e0ba72e863123a9bb0252b326bbc223aafbb2c456957ed296a6",
+      "teamId": null,
+      "killerPreference": "no",
+      "attending": true,
+      "createdAt": "2026-11-07T07:33:02.452Z"
+    },
+    {
+      "id": "0af8f0c2-eab0-4f1e-880b-3ce319df3ff7",
+      "firstName": "Marco",
+      "lastName": "Cappellari",
+      "nickname": "Hyce",
+      "passwordSalt": "4d646a68fef4efe6aca7e04d95965620",
+      "passwordHash": "c27cb1b4a2348fa8edc0fe744b32b978715f10bcf59726b1f51cbf03753d09c2",
+      "teamId": "d5a1f5a6-c0c2-44ed-a100-482b9f93e1ea",
+      "killerPreference": "no",
+      "attending": true,
+      "createdAt": "2026-11-08T11:33:02.804Z"
+    },
+    {
+      "id": "8d84754f-ae04-40c5-9c96-99ddfb18c0ce",
+      "firstName": "Francesca",
+      "lastName": "Sciancati",
+      "nickname": "Francesca",
+      "passwordSalt": "e1040a2a16ca124f15b3b25f76114ed3",
+      "passwordHash": "47abea783252bc48709f3aebdd7f586f9866f440c29a8a72a96f731cc3f0fc84",
+      "teamId": "d5a1f5a6-c0c2-44ed-a100-482b9f93e1ea",
+      "killerPreference": "no",
+      "attending": true,
+      "createdAt": "2026-11-08T11:49:50.788Z"
     }
   ],
   "teams": [
@@ -44,14 +224,28 @@
       "name": "Crazy team",
       "createdBy": "e343e2ee-810b-4509-85fa-0a5335d6403f",
       "createdAt": "2026-11-01T17:39:40.151Z",
-      "color": "orange"
+      "color": "brown"
     },
     {
-      "id": "ea078ed4-d258-4fa7-b027-9de929e38d64",
-      "name": "Bnj",
-      "color": "orange",
-      "createdBy": "1a0ef600-aa62-4624-8f5e-c97514c5b223",
-      "createdAt": "2026-11-02T12:33:02.237Z"
+      "id": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
+      "name": "bombaaa",
+      "color": "black",
+      "createdBy": "75da3335-b362-4c4a-adf9-90c5c42845f8",
+      "createdAt": "2026-11-02T13:09:43.541Z"
+    },
+    {
+      "id": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
+      "name": "Le laureate",
+      "color": "white",
+      "createdBy": "03757a61-5076-4629-9420-2e1649129c5d",
+      "createdAt": "2026-11-05T13:52:07.562Z"
+    },
+    {
+      "id": "d5a1f5a6-c0c2-44ed-a100-482b9f93e1ea",
+      "name": "Samoiedi",
+      "color": "blue",
+      "createdBy": "0af8f0c2-eab0-4f1e-880b-3ce319df3ff7",
+      "createdAt": "2026-11-08T11:48:27.857Z"
     }
   ]
 }
