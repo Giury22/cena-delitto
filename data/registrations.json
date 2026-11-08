@@ -204,6 +204,18 @@
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-08T11:33:02.804Z"
+    },
+    {
+      "id": "8d84754f-ae04-40c5-9c96-99ddfb18c0ce",
+      "firstName": "Francesca",
+      "lastName": "Sciancati",
+      "nickname": "Francesca",
+      "passwordSalt": "e1040a2a16ca124f15b3b25f76114ed3",
+      "passwordHash": "47abea783252bc48709f3aebdd7f586f9866f440c29a8a72a96f731cc3f0fc84",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-08T11:49:50.788Z"
     }
   ],
   "teams": [
