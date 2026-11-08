@@ -8,7 +8,7 @@
   <title>Cena con delitto · Il tuo posto a tavola</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css?v=6">
-  <script type="module" src="/app.js?v=7"></script>
+  <script type="module" src="/app.js?v=8"></script>
 </head>
 <body>
   <a class="skip" href="#main">Vai al contenuto</a>
@@ -26,6 +26,22 @@
       <div class="delete-dialog-actions">
         <button class="button outline" id="cancel-delete" type="button" autofocus>Annulla</button>
         <button class="button danger" id="confirm-delete" type="submit">Elimina</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="password-dialog" aria-labelledby="password-title" aria-describedby="password-description">
+    <form id="password-form">
+      <span class="eyebrow">ACCESSO PARTECIPANTI</span>
+      <h2 id="password-title">Imposta una nuova password.</h2>
+      <p id="password-description"></p>
+      <label for="new-password">Nuova password da comunicare al partecipante</label>
+      <input id="new-password" name="password" type="password" autocomplete="new-password" required autofocus aria-describedby="new-password-help">
+      <small id="new-password-help" class="input-help">La vecchia password verrà sostituita e gli accessi già aperti verranno chiusi. Profilo e squadra saranno conservati.</small>
+      <label class="checkbox-line"><input id="show-new-password" type="checkbox"> Mostra la nuova password</label>
+      <p class="form-error" id="password-error" role="alert"></p>
+      <div class="delete-dialog-actions">
+        <button class="button outline" id="cancel-password" type="button">Annulla</button>
+        <button class="button primary" id="save-password" type="submit">Salva nuova password</button>
       </div>
     </form>
   </dialog>

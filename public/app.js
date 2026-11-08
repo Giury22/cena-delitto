@@ -4,12 +4,14 @@ const main = document.querySelector('#main');
 const actions = document.querySelector('#header-actions');
 const dialog = document.querySelector('#team-dialog');
 const deleteDialog = document.querySelector('#delete-dialog');
+const passwordDialog = document.querySelector('#password-dialog');
 const trashIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6"/></svg>';
 let state = { role: 'guest' };
 let authMode = 'register';
 let adminView = false;
 let toastTimer;
 let pendingDelete = null;
+let pendingPassword = null;
 let adminFilters = { query: '', attendance: 'all', role: 'all' };
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const preferenceLabels = { yes: 'Sì, ci sto', no: 'Preferisco di no', undecided: 'Per me è uguale' };
@@ -100,7 +102,7 @@ function renderAdmin() {
   const { users, teams } = state;
   const confirmed = users.filter(user => user.attending);
   const counts = [confirmed.length, teams.length, confirmed.filter(user => !user.teamId).length, confirmed.filter(user => user.killerPreference === 'yes').length];
-  main.innerHTML = `<section class="page-intro"><div><span class="eyebrow">LA REGIA DELLA SERATA</span><h1>Tutti gli indizi.<br><em>Un solo sguardo.</em></h1><p>Partecipanti, squadre e aspiranti assassini: qui hai tutto sotto controllo.</p></div><div class="admin-actions"><button id="refresh" class="button light">↻ Aggiorna</button><a class="button primary" href="/api/admin/export" download>Esporta CSV ↗</a></div></section><div class="stats">${['Presenze confermate', 'Squadre create', 'Ancora senza squadra', 'Disponibili come assassino'].map((label, i) => `<div class="stat"><span>${label}</span><strong>${counts[i].toString().padStart(2, '0')}</strong><small>${i === 0 ? `${users.length} iscrizioni totali` : ['','Tutti i gruppi, anche vuoti','Tra i partecipanti confermati','Tra i partecipanti confermati'][i]}</small></div>`).join('')}</div><section class="panel admin-panel"><div class="section-heading"><div><span class="eyebrow">IL REGISTRO DEGLI INVITATI</span><h2>Chi viene a cena.</h2></div></div><div class="filters"><label class="search-label"><span class="sr-only">Cerca partecipante o squadra</span><input id="search" type="search" placeholder="Cerca un nome, un soprannome, una squadra…"></label><label><span class="sr-only">Filtra partecipazione</span><select id="attendance-filter"><option value="all">Tutte le presenze</option><option value="yes">Confermate</option><option value="no">Rinunciate</option></select></label><label><span class="sr-only">Filtra preferenza assassino</span><select id="role-filter"><option value="all">Tutte le preferenze</option><option value="yes">Disponibili come assassino</option><option value="no">Preferiscono di no</option><option value="undecided">Indifferenti</option></select></label></div><div class="table-wrap"><table><caption class="sr-only">Partecipanti alla cena e preferenze</caption><thead><tr><th>Partecipante</th><th>Squadra</th><th>Presenza</th><th>Assassino?</th><th class="delete-cell"><span class="sr-only">Azioni</span></th></tr></thead><tbody id="participants"></tbody></table></div><p id="table-count" class="quiet-note"></p></section><section class="admin-teams"><div class="section-heading"><div><span class="eyebrow">LE ALLEANZE</span><h2>Le squadre a tavola.</h2></div></div><div class="team-grid admin-team-grid">${teams.length ? teams.map((team, index) => { const members = users.filter(user => user.teamId === team.id); return `<article class="team-card"><div class="team-top"><span class="team-symbol" aria-hidden="true">${['✳', '◇', '✦', '⌘'][index % 4]}</span><div class="team-card-actions"><span class="small-tag">${members.filter(user => user.attending).length} confermati / ${members.length}</span><button type="button" class="delete-button" data-delete-team="${esc(team.id)}" aria-label="Elimina la squadra ${esc(team.name)}" title="Elimina squadra">${trashIcon}</button></div></div><h3>${esc(team.name)}</h3>${colorBadge(team)}<ul class="admin-members">${members.length ? members.map(user => `<li><span>${esc(user.firstName)} ${esc(user.lastName)}<small>${esc(user.nickname)}</small></span><span class="member-state ${user.attending ? '' : 'absent'}">${user.attending ? 'Confermato' : 'Assente'}</span></li>`).join('') : '<li>Nessun partecipante al momento.</li>'}</ul></article>`; }).join('') : '<div class="empty-state"><h3>Le alleanze devono ancora nascere.</h3><p>Le squadre appariranno qui appena qualcuno ne creerà una.</p></div>'}</div></section>`;
+  main.innerHTML = `<section class="page-intro"><div><span class="eyebrow">LA REGIA DELLA SERATA</span><h1>Tutti gli indizi.<br><em>Un solo sguardo.</em></h1><p>Partecipanti, squadre e aspiranti assassini: qui hai tutto sotto controllo.</p></div><div class="admin-actions"><button id="refresh" class="button light">↻ Aggiorna</button><a class="button primary" href="/api/admin/export" download>Esporta CSV ↗</a></div></section><div class="stats">${['Presenze confermate', 'Squadre create', 'Ancora senza squadra', 'Disponibili come assassino'].map((label, i) => `<div class="stat"><span>${label}</span><strong>${counts[i].toString().padStart(2, '0')}</strong><small>${i === 0 ? `${users.length} iscrizioni totali` : ['','Tutti i gruppi, anche vuoti','Tra i partecipanti confermati','Tra i partecipanti confermati'][i]}</small></div>`).join('')}</div><section class="panel admin-panel"><div class="section-heading"><div><span class="eyebrow">IL REGISTRO DEGLI INVITATI</span><h2>Chi viene a cena.</h2></div></div><div class="filters"><label class="search-label"><span class="sr-only">Cerca partecipante o squadra</span><input id="search" type="search" placeholder="Cerca un nome, un soprannome, una squadra…"></label><label><span class="sr-only">Filtra partecipazione</span><select id="attendance-filter"><option value="all">Tutte le presenze</option><option value="yes">Confermate</option><option value="no">Rinunciate</option></select></label><label><span class="sr-only">Filtra preferenza assassino</span><select id="role-filter"><option value="all">Tutte le preferenze</option><option value="yes">Disponibili come assassino</option><option value="no">Preferiscono di no</option><option value="undecided">Indifferenti</option></select></label></div><div class="table-wrap"><table><caption class="sr-only">Partecipanti alla cena e preferenze</caption><thead><tr><th>Partecipante</th><th>Squadra</th><th>Presenza</th><th>Assassino?</th><th>Accesso</th><th class="delete-cell"><span class="sr-only">Azioni</span></th></tr></thead><tbody id="participants"></tbody></table></div><p id="table-count" class="quiet-note"></p></section><section class="admin-teams"><div class="section-heading"><div><span class="eyebrow">LE ALLEANZE</span><h2>Le squadre a tavola.</h2></div></div><div class="team-grid admin-team-grid">${teams.length ? teams.map((team, index) => { const members = users.filter(user => user.teamId === team.id); return `<article class="team-card"><div class="team-top"><span class="team-symbol" aria-hidden="true">${['✳', '◇', '✦', '⌘'][index % 4]}</span><div class="team-card-actions"><span class="small-tag">${members.filter(user => user.attending).length} confermati / ${members.length}</span><button type="button" class="delete-button" data-delete-team="${esc(team.id)}" aria-label="Elimina la squadra ${esc(team.name)}" title="Elimina squadra">${trashIcon}</button></div></div><h3>${esc(team.name)}</h3>${colorBadge(team)}<ul class="admin-members">${members.length ? members.map(user => `<li><span>${esc(user.firstName)} ${esc(user.lastName)}<small>${esc(user.nickname)}</small></span><span class="member-state ${user.attending ? '' : 'absent'}">${user.attending ? 'Confermato' : 'Assente'}</span></li>`).join('') : '<li>Nessun partecipante al momento.</li>'}</ul></article>`; }).join('') : '<div class="empty-state"><h3>Le alleanze devono ancora nascere.</h3><p>Le squadre appariranno qui appena qualcuno ne creerà una.</p></div>'}</div></section>`;
   function filter() {
     const query = document.querySelector('#search').value.trim().toLocaleLowerCase('it');
     const attendance = document.querySelector('#attendance-filter').value;
@@ -110,13 +112,15 @@ function renderAdmin() {
       const team = teams.find(item => item.id === user.teamId);
       return `${user.firstName} ${user.lastName} ${user.nickname} ${team?.name || ''}`.toLocaleLowerCase('it').includes(query) && (attendance === 'all' || user.attending === (attendance === 'yes')) && (role === 'all' || user.killerPreference === role);
     });
-    document.querySelector('#participants').innerHTML = filtered.length ? filtered.map(user => `<tr><td><strong>${esc(user.firstName)} ${esc(user.lastName)}</strong><small>${esc(user.nickname)}</small></td><td>${esc(teams.find(team => team.id === user.teamId)?.name || 'Da scegliere')}${user.teamId ? colorBadge(teams.find(team => team.id === user.teamId) || {}) : ''}</td><td><span class="badge ${user.attending ? 'green' : ''}">${user.attending ? 'Confermata' : 'Rinunciata'}</span></td><td><span class="badge ${user.killerPreference === 'yes' ? 'ochre' : ''}">${esc(preferenceLabels[user.killerPreference])}</span></td><td class="delete-cell"><button type="button" class="delete-button" data-delete-user="${esc(user.id)}" aria-label="Elimina il profilo di ${esc(user.firstName)} ${esc(user.lastName)}" title="Elimina profilo">${trashIcon}</button></td></tr>`).join('') : `<tr><td colspan="5" class="table-empty">${users.length ? 'Nessun partecipante corrisponde ai filtri.' : 'La lista è ancora vuota. Il primo invito aspetta solo di essere condiviso.'}</td></tr>`;
+    document.querySelector('#participants').innerHTML = filtered.length ? filtered.map(user => `<tr><td><strong>${esc(user.firstName)} ${esc(user.lastName)}</strong><small>${esc(user.nickname)}</small></td><td>${esc(teams.find(team => team.id === user.teamId)?.name || 'Da scegliere')}${user.teamId ? colorBadge(teams.find(team => team.id === user.teamId) || {}) : ''}</td><td><span class="badge ${user.attending ? 'green' : ''}">${user.attending ? 'Confermata' : 'Rinunciata'}</span></td><td><span class="badge ${user.killerPreference === 'yes' ? 'ochre' : ''}">${esc(preferenceLabels[user.killerPreference])}</span></td><td><button type="button" class="button light" data-password-user="${esc(user.id)}" aria-label="Imposta una nuova password per ${esc(user.firstName)} ${esc(user.lastName)}">Nuova password</button></td><td class="delete-cell"><button type="button" class="delete-button" data-delete-user="${esc(user.id)}" aria-label="Elimina il profilo di ${esc(user.firstName)} ${esc(user.lastName)}" title="Elimina profilo">${trashIcon}</button></td></tr>`).join('') : `<tr><td colspan="6" class="table-empty">${users.length ? 'Nessun partecipante corrisponde ai filtri.' : 'La lista è ancora vuota. Il primo invito aspetta solo di essere condiviso.'}</td></tr>`;
     document.querySelector('#table-count').textContent = `${filtered.length} di ${users.length} partecipanti`;
   }
   document.querySelector('#search').value = adminFilters.query;
   document.querySelector('#attendance-filter').value = adminFilters.attendance;
   document.querySelector('#role-filter').value = adminFilters.role;
   document.querySelector('#participants').addEventListener('click', event => {
+    const passwordButton = event.target.closest('[data-password-user]');
+    if (passwordButton) openPasswordReset(passwordButton.dataset.passwordUser);
     const button = event.target.closest('[data-delete-user]');
     if (button) openDeletion('users', button.dataset.deleteUser);
   });
@@ -128,6 +132,46 @@ function renderAdmin() {
   document.querySelector('#refresh').addEventListener('click', event => busy(event.currentTarget, async () => { state = await api('/api/state'); render(); toast('Panoramica aggiornata.'); }));
   filter();
 }
+function openPasswordReset(id) {
+  if (state.role !== 'admin') return;
+  const user = state.users.find(item => item.id === id);
+  if (!user) return;
+  document.querySelector('#password-form').reset();
+  document.querySelector('#new-password').type = 'password';
+  document.querySelector('#password-error').textContent = '';
+  document.querySelector('#password-description').textContent = `Stai cambiando la password di ${user.firstName} ${user.lastName} (${user.nickname}). Scegli la nuova password e comunicala direttamente al partecipante.`;
+  pendingPassword = id;
+  passwordDialog.showModal();
+}
+
+document.querySelector('#cancel-password').addEventListener('click', () => passwordDialog.close());
+document.querySelector('#show-new-password').addEventListener('change', event => {
+  document.querySelector('#new-password').type = event.currentTarget.checked ? 'text' : 'password';
+});
+passwordDialog.addEventListener('close', () => {
+  pendingPassword = null;
+  document.querySelector('#password-form').reset();
+  document.querySelector('#new-password').type = 'password';
+});
+passwordDialog.addEventListener('cancel', event => {
+  if (document.querySelector('#save-password').disabled) event.preventDefault();
+});
+document.querySelector('#password-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!pendingPassword || document.querySelector('#save-password').disabled) return;
+  const id = pendingPassword;
+  const password = document.querySelector('#new-password').value;
+  const cancel = document.querySelector('#cancel-password');
+  cancel.disabled = true;
+  try {
+    await busy(document.querySelector('#save-password'), async () => {
+      state = await api(`/api/admin/users/${encodeURIComponent(id)}/password`, 'PATCH', { password });
+      passwordDialog.close(); render(); main.focus({ preventScroll: true });
+      toast('Password aggiornata. Il partecipante può accedere con quella nuova.');
+    }, document.querySelector('#password-error'));
+  } finally { cancel.disabled = false; }
+});
+
 function openDeletion(collection, id) {
   if (state.role !== 'admin') return;
   const item = state[collection].find(entry => entry.id === id);

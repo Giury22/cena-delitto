@@ -12,7 +12,8 @@ const scrypt = promisify(scryptCallback);
 const normalized = value => value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('it');
 const nameKey = (first, last) => JSON.stringify([normalized(first), normalized(last)]);
 const hashToken = value => createHash('sha256').update(value).digest('hex');
-const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, ...user }) => user;
+const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, passwordVersion, ...user }) => user;
+const currentCredentials = (user, session) => (user.passwordVersion ?? null) === (session.passwordVersion ?? null);
 class ApiError extends Error { constructor(status, message) { super(message); this.status = status; } }
 function teamColor(value, teams, teamId = null) {
   if (typeof value !== 'string' || !Object.hasOwn(teamColors, value)) throw new ApiError(400, 'Scegli un colore per la squadra.');
@@ -84,7 +85,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
     if (session?.role === 'admin') return { role: 'admin', admin: { firstName: adminFirstName, lastName: adminLastName }, users: data.users.map(publicUser), teams: data.teams };
     if (session?.role === 'participant') {
       const user = data.users.find(item => item.id === session.userId);
-      if (user) return { role: 'participant', user: publicUser(user), teams: data.teams.map(team => ({ ...team, members: data.users.filter(item => item.teamId === team.id).map(item => ({ id: item.id, nickname: item.nickname, attending: item.attending })) })) };
+      if (user && currentCredentials(user, session)) return { role: 'participant', user: publicUser(user), teams: data.teams.map(team => ({ ...team, members: data.users.filter(item => item.teamId === team.id).map(item => ({ id: item.id, nickname: item.nickname, attending: item.attending })) })) };
     }
     return { role: 'guest' };
   }
@@ -140,8 +141,9 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
           for (const candidate of data.users.filter(item => nameKey(item.firstName, item.lastName) === key)) if (await passwordMatches(candidate, password)) { user = candidate; break; }
           if (!user) throw new ApiError(401, 'Nome, cognome o password non corretti.');
         }
-        setSession(req, res, { role: 'participant', userId: user.id });
-        return send(200, await state({ role: 'participant', userId: user.id }));
+        const participant = { role: 'participant', userId: user.id, passwordVersion: user.passwordVersion };
+        setSession(req, res, participant);
+        return send(200, await state(participant));
       }
       if (req.method === 'POST' && url.pathname === '/api/auth/admin') {
         limit(req);
@@ -163,6 +165,27 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
         })];
         res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="partecipanti.csv"' });
         res.end('\uFEFF' + rows.map(row => row.map(cell).join(';')).join('\r\n')); return;
+      }
+      const passwordTarget = /^\/api\/admin\/users\/([^/]+)\/password$/.exec(url.pathname);
+      if (req.method === 'PATCH' && passwordTarget) {
+        if (session.role !== 'admin') throw new ApiError(403, 'Accesso riservato all’organizzatore.');
+        const { password } = await readBody(req);
+        if (typeof password !== 'string' || password.length === 0) throw new ApiError(400, 'Inserisci una nuova password.');
+        const passwordSalt = randomBytes(16).toString('hex');
+        const passwordHash = (await scrypt(password, passwordSalt, 32)).toString('hex');
+        await store.mutate(async data => {
+          const user = data.users.find(item => item.id === passwordTarget[1]);
+          if (!user) throw new ApiError(404, 'Profilo non trovato. Potrebbe essere già stato eliminato.');
+          for (const candidate of data.users.filter(item => item.id !== user.id && nameKey(item.firstName, item.lastName) === nameKey(user.firstName, user.lastName))) {
+            if (await passwordMatches(candidate, password)) throw new ApiError(409, 'Un omonimo usa già questa password. Scegline una diversa per distinguere i due profili.');
+          }
+          user.passwordSalt = passwordSalt;
+          user.passwordHash = passwordHash;
+          user.passwordVersion = randomUUID();
+          delete user.pinHash;
+          delete user.pinSalt;
+        });
+        return send(200, await state(session));
       }
       const deleteTarget = /^\/api\/admin\/(users|teams)\/([^/]+)$/.exec(url.pathname);
       if (req.method === 'DELETE' && deleteTarget) {
@@ -189,6 +212,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
       await store.mutate(data => {
         const user = data.users.find(item => item.id === session.userId);
         if (!user) throw new ApiError(401, 'Profilo non trovato.');
+        if (!currentCredentials(user, session)) throw new ApiError(401, 'La password è stata cambiata. Accedi di nuovo.');
         if (req.method === 'PATCH' && url.pathname === '/api/me') {
           if (body.nickname !== undefined) user.nickname = field(body.nickname, 'Soprannome', 32);
           if (body.killerPreference !== undefined) {

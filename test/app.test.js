@@ -258,6 +258,82 @@ test('amministrazione, CSV, controlli accesso, origine e sessione firmata', asyn
   assert.ok(logout.headers.get('set-cookie').includes('Max-Age=0'));
 });
 
+test('solo admin reimposta la password: conserva il profilo, protegge il segreto e revoca le vecchie sessioni', async t => {
+  const { call, dataFile } = await fixture(t);
+  const registered = await call('/api/auth/register', 'POST', person());
+  const other = await call('/api/auth/register', 'POST', person('Altro'));
+  await call('/api/teams', 'POST', { name: 'Da conservare', color: 'purple' }, registered.cookie);
+  await call('/api/me', 'PATCH', { nickname: 'Sempre io', killerPreference: 'yes', attending: false }, registered.cookie);
+  const before = JSON.parse(await readFile(dataFile, 'utf8'));
+  const route = `/api/admin/users/${registered.body.user.id}/password`;
+  const newPassword = ' nuova 🍝 password ';
+  assert.equal((await call(route, 'PATCH', { password: newPassword })).status, 401);
+  assert.equal((await call(route, 'PATCH', { password: newPassword }, other.cookie)).status, 403);
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  assert.equal((await call(route, 'PATCH', { password: newPassword }, admin.cookie, { Origin: 'https://altro.example' })).status, 403);
+  for (const invalid of [undefined, '', null, 42]) {
+    assert.equal((await call(route, 'PATCH', { password: invalid }, admin.cookie)).status, 400);
+  }
+  assert.equal((await call('/api/admin/users/missing/password', 'PATCH', { password: newPassword }, admin.cookie)).status, 404);
+  assert.deepEqual(JSON.parse(await readFile(dataFile, 'utf8')), before);
+  const reset = await call(route, 'PATCH', { password: newPassword }, admin.cookie);
+  assert.equal(reset.status, 200);
+  assert.deepEqual(reset.body.users[0], admin.body.users[0]);
+  assert.deepEqual(reset.body.teams, admin.body.teams);
+  assert.equal(JSON.stringify(reset.body).includes(newPassword), false);
+  const saved = JSON.parse(await readFile(dataFile, 'utf8'));
+  assert.notEqual(saved.users[0].passwordSalt, before.users[0].passwordSalt);
+  assert.notEqual(saved.users[0].passwordHash, before.users[0].passwordHash);
+  assert.ok(saved.users[0].passwordVersion);
+  assert.equal(saved.users[0].password, undefined);
+  assert.deepEqual(saved.users[1], before.users[1]);
+  assert.equal((await call('/api/auth/login', 'POST', person())).status, 401);
+  assert.equal((await call('/api/auth/login', 'POST', person('Giulia', newPassword.trim()))).status, 401);
+  assert.deepEqual((await call('/api/state', 'GET', undefined, registered.cookie)).body, { role: 'guest' });
+  assert.equal((await call('/api/me', 'PATCH', { nickname: 'Vecchia sessione' }, registered.cookie)).status, 401);
+  assert.equal((await call('/api/team', 'PATCH', { teamId: null }, registered.cookie)).status, 401);
+  const login = await call('/api/auth/login', 'POST', person('Giulia', newPassword));
+  assert.equal(login.status, 200);
+  assert.equal(login.body.user.id, registered.body.user.id);
+  assert.equal(login.body.user.nickname, 'Sempre io');
+  assert.equal(login.body.user.passwordVersion, undefined);
+  assert.equal((await call('/api/state', 'GET', undefined, login.cookie)).body.role, 'participant');
+  assert.equal((await call('/api/me', 'PATCH', { attending: true }, login.cookie)).status, 200);
+  assert.equal((await call('/api/state', 'GET', undefined, other.cookie)).body.role, 'participant');
+  await call(route, 'PATCH', { password: 'seconda' }, admin.cookie);
+  assert.equal((await call('/api/state', 'GET', undefined, login.cookie)).body.role, 'guest');
+  assert.equal((await call('/api/auth/login', 'POST', person('Giulia', 'seconda'))).status, 200);
+});
+
+test('reset da Netlify compatibile con i vecchi PIN e senza confondere gli omonimi', async t => {
+  const { call, store, server } = await fixture(t);
+  const a = await call('/api/auth/register', 'POST', person());
+  const b = await call('/api/auth/register', 'POST', person('Giulia', 'altra'));
+  await store.mutate(data => {
+    const user = data.users[0];
+    user.pinHash = user.passwordHash; user.pinSalt = user.passwordSalt;
+    delete user.passwordHash; delete user.passwordSalt;
+  });
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  const route = `/api/admin/users/${a.body.user.id}/password`;
+  const before = await store.read();
+  const blocked = await call(route, 'PATCH', { password: 'altra' }, admin.cookie);
+  assert.equal(blocked.status, 409);
+  assert.match(blocked.body.error, /omonimo/);
+  assert.deepEqual(await store.read(), before);
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const response = await handler(new Request(`https://cena.example${route}`, {
+    method: 'PATCH', headers: { Cookie: admin.cookie, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: 'a' })
+  }));
+  assert.equal(response.status, 200);
+  const user = (await store.read()).users[0];
+  assert.equal(user.pinHash, undefined);
+  assert.equal(user.pinSalt, undefined);
+  assert.equal((await call('/api/auth/login', 'POST', person())).status, 401);
+  assert.equal((await call('/api/auth/login', 'POST', person('Giulia', 'a'))).body.user.id, a.body.user.id);
+  assert.equal((await call('/api/auth/login', 'POST', person('Giulia', 'altra'))).body.user.id, b.body.user.id);
+});
+
 test('solo admin elimina profili: rimuove appartenenza, accesso e riferimenti al creatore', async t => {
   const { call, dataFile } = await fixture(t);
   const owner = await call('/api/auth/register', 'POST', person('Creatore'));
