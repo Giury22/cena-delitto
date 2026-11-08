@@ -192,6 +192,18 @@
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-07T07:33:02.452Z"
+    },
+    {
+      "id": "0af8f0c2-eab0-4f1e-880b-3ce319df3ff7",
+      "firstName": "Marco",
+      "lastName": "Cappellari",
+      "nickname": "Hyce",
+      "passwordSalt": "4d646a68fef4efe6aca7e04d95965620",
+      "passwordHash": "c27cb1b4a2348fa8edc0fe744b32b978715f10bcf59726b1f51cbf03753d09c2",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-08T11:33:02.804Z"
     }
   ],
   "teams": [
