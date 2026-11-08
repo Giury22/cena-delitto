@@ -205,6 +205,18 @@
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-08T11:49:50.788Z"
+    },
+    {
+      "id": "72bc7853-d410-4493-b917-7607e2983556",
+      "firstName": "Ludovica",
+      "lastName": "Favero",
+      "nickname": "Ludo",
+      "passwordSalt": "f29c1036f82dea5b85245772a4d6887f",
+      "passwordHash": "a6ff33300c8f8eb8d5e8ee25b84504250db6c5b7d5250d52db850dc9421e07a5",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-08T21:06:58.011Z"
     }
   ],
   "teams": [
