@@ -209,6 +209,93 @@ test('foto oltre 16 KB: sostituzione e limiti identici in locale e nelle funzion
   assert.equal((await call('/api/auth/login', 'POST', { ...person(), padding: 'x'.repeat(17000) })).status, 413);
 });
 
+test('massimo 4 persone per squadra: quinto ingresso bloccato, cambio senza perdere il gruppo e posti liberati', async t => {
+  const { call, store } = await fixture(t);
+  const people = [];
+  for (let index = 0; index < 6; index++) people.push(await call('/api/auth/register', 'POST', person(`Invitato ${index}`)));
+  const created = await call('/api/teams', 'POST', { name: 'Quattro a tavola', color: 'red' }, people[0].cookie);
+  const teamId = created.body.user.teamId;
+  for (const member of people.slice(1, 4)) assert.equal((await call('/api/team', 'PATCH', { teamId }, member.cookie)).status, 200);
+  assert.equal((await call('/api/team', 'PATCH', { teamId }, people[0].cookie)).status, 200);
+  const otherTeam = await call('/api/teams', 'POST', { name: 'Altri amici', color: 'blue' }, people[4].cookie);
+  const before = await store.read();
+  const blocked = await call('/api/team', 'PATCH', { teamId }, people[4].cookie);
+  assert.equal(blocked.status, 409);
+  assert.match(blocked.body.error, /completa.*massimo 4 persone/);
+  assert.deepEqual(await store.read(), before);
+  assert.equal((await call('/api/state', 'GET', undefined, people[4].cookie)).body.user.teamId, otherTeam.body.user.teamId);
+  assert.equal((await call('/api/team', 'PATCH', { teamId }, people[5].cookie)).status, 409);
+  assert.equal((await call('/api/state', 'GET', undefined, people[5].cookie)).body.user.teamId, null);
+  await call('/api/me', 'PATCH', { attending: false }, people[3].cookie);
+  assert.equal((await call('/api/team', 'PATCH', { teamId }, people[5].cookie)).status, 409);
+  await call('/api/team', 'PATCH', { teamId: null }, people[3].cookie);
+  assert.equal((await call('/api/team', 'PATCH', { teamId }, people[4].cookie)).status, 200);
+  assert.equal((await call('/api/team', 'PATCH', { teamId }, people[5].cookie)).status, 409);
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  await call(`/api/admin/users/${people[2].body.user.id}`, 'DELETE', {}, admin.cookie);
+  const joined = await call('/api/team', 'PATCH', { teamId }, people[5].cookie);
+  assert.equal(joined.status, 200);
+  assert.equal(joined.body.teams.find(team => team.id === teamId).members.length, 4);
+  assert.equal((await store.read()).users.filter(user => user.teamId === teamId).length, 4);
+  const rules = await call('/team-rules.js');
+  assert.equal(rules.status, 200);
+  assert.match(rules.body, /MAX_TEAM_MEMBERS = 4/);
+});
+
+test('due ingressi simultanei per l’ultimo posto non superano il limite di 4 persone', async t => {
+  const { call, store } = await fixture(t);
+  const people = [];
+  for (let index = 0; index < 5; index++) people.push(await call('/api/auth/register', 'POST', person(`Simultaneo ${index}`)));
+  const created = await call('/api/teams', 'POST', { name: 'Ultimo posto', color: 'green' }, people[0].cookie);
+  const teamId = created.body.user.teamId;
+  for (const member of people.slice(1, 3)) await call('/api/team', 'PATCH', { teamId }, member.cookie);
+  const results = await Promise.all(people.slice(3).map(member => call('/api/team', 'PATCH', { teamId }, member.cookie)));
+  assert.deepEqual(results.map(result => result.status).sort(), [200, 409]);
+  const data = await store.read();
+  assert.equal(data.users.filter(user => user.teamId === teamId).length, 4);
+  assert.equal(data.users.filter(user => user.teamId === null).length, 1);
+});
+
+test('Netlify e GitHub ricontrollano il limite se un’altra istanza occupa l’ultimo posto', async () => {
+  let data = { version: 1, users: [], teams: [] };
+  let revision = 1;
+  let conflict = false;
+  let conflictingWrites = 0;
+  const storage = new GitHubStore({ token: 'test-token', repository: 'test/cena', fetcher: async (url, options) => {
+    if (options.method === 'GET') return Response.json({ sha: String(revision), content: Buffer.from(JSON.stringify(data)).toString('base64') });
+    const body = JSON.parse(options.body);
+    assert.equal(body.sha, String(revision));
+    if (conflict) {
+      conflict = false; conflictingWrites++;
+      data.users.push({ id: 'remote', nickname: 'Ultimo arrivato', attending: true, teamId: 'target' });
+      revision++;
+      return Response.json({}, { status: 409 });
+    }
+    data = JSON.parse(Buffer.from(body.content, 'base64').toString('utf8'));
+    revision++;
+    return Response.json({}, { status: 200 });
+  } });
+  const { server } = await createApp({ storage, adminPassword: password, ...adminConfig });
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const registered = await handler(new Request('https://cena.example/api/auth/register', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(person())
+  }));
+  const cookie = registered.headers.get('set-cookie').split(';')[0];
+  const userId = (await registered.json()).user.id;
+  data.teams.push({ id: 'original', name: 'Squadra precedente', color: 'blue' }, { id: 'target', name: 'Quasi piena', color: 'red' });
+  data.users[0].teamId = 'original';
+  for (let index = 0; index < 3; index++) data.users.push({ id: `member-${index}`, nickname: `Membro ${index}`, attending: true, teamId: 'target' });
+  conflict = true;
+  const response = await handler(new Request('https://cena.example/api/team', {
+    method: 'PATCH', headers: { Cookie: cookie, 'Content-Type': 'application/json' }, body: JSON.stringify({ teamId: 'target' })
+  }));
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).error, /completa.*massimo 4 persone/);
+  assert.equal(conflictingWrites, 1);
+  assert.equal(data.users.filter(user => user.teamId === 'target').length, 4);
+  assert.equal(data.users.find(user => user.id === userId).teamId, 'original');
+});
+
 test('colore squadra obbligatorio, condiviso, persistente e modificabile solo dai membri', async t => {
   const { call, dataFile, store, server } = await fixture(t);
   const owner = await call('/api/auth/register', 'POST', person('Caposquadra'));

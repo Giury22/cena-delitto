@@ -6,6 +6,7 @@ import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual, cre
 import { promisify } from 'node:util';
 import { JsonStore } from './lib/store.js';
 import { teamColors, teamColorLabel } from './public/team-colors.js';
+import { MAX_TEAM_MEMBERS } from './public/team-rules.js';
 import { requestBodyLimit, validProfileImage } from './lib/profile-image.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -101,7 +102,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
     try {
       const url = new URL(req.url, 'http://localhost');
       if (!url.pathname.startsWith('/api/')) {
-        const files = { '/': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/team-colors.js': ['team-colors.js', 'text/javascript; charset=utf-8'], '/styles.css': ['styles.css', 'text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'] };
+        const files = { '/': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/team-colors.js': ['team-colors.js', 'text/javascript; charset=utf-8'], '/team-rules.js': ['team-rules.js', 'text/javascript; charset=utf-8'], '/styles.css': ['styles.css', 'text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'] };
         if (!['GET', 'HEAD'].includes(req.method) || !files[url.pathname]) throw new ApiError(404, 'Pagina non trovata.');
         const [file, type] = files[url.pathname];
         const content = await readFile(path.join(root, 'public', file));
@@ -241,6 +242,9 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
           team.color = teamColor(body.color, data.teams, team.id);
         } else if (req.method === 'PATCH' && url.pathname === '/api/team') {
           if (body.teamId !== null && !data.teams.some(team => team.id === body.teamId)) throw new ApiError(404, 'Squadra non trovata.');
+          if (body.teamId !== null && body.teamId !== user.teamId && data.users.filter(item => item.teamId === body.teamId).length >= MAX_TEAM_MEMBERS) {
+            throw new ApiError(409, `Questa squadra è completa: può avere al massimo ${MAX_TEAM_MEMBERS} persone. Scegli un’altra squadra o creane una.`);
+          }
           user.teamId = body.teamId;
         } else throw new ApiError(404, 'Operazione non trovata.');
       });

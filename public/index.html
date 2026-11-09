@@ -8,7 +8,7 @@
   <title>Cena con delitto · Il tuo posto a tavola</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css?v=6">
-  <script type="module" src="/app.js?v=8"></script>
+  <script type="module" src="/app.js?v=9"></script>
 </head>
 <body>
   <a class="skip" href="#main">Vai al contenuto</a>
@@ -16,7 +16,7 @@
   <main id="main" tabindex="-1"><div class="loading">Prepariamo il tuo posto a tavola…</div></main>
   <footer><span>Buona compagnia. Cattive intenzioni.</span><button id="admin-link" class="text-button">Accesso organizzatore <span aria-hidden="true">↗</span></button></footer>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <dialog id="team-dialog" aria-labelledby="team-title"><form id="team-form"><div class="dialog-top"><span class="eyebrow">UN NUOVO INIZIO</span><button type="button" class="icon-button" id="close-dialog" aria-label="Chiudi">×</button></div><h2 id="team-title">Dai un nome alla tua squadra.</h2><p>Scegliete un nome e un colore. Gli altri invitati potranno trovarvi e unirsi a voi.</p><label for="team-name">Nome della squadra</label><input id="team-name" name="name" maxlength="40" required placeholder="Come vi chiamerete?"><label for="team-color" class="color-label">Colore della squadra</label><select id="team-color" name="color" required aria-describedby="team-color-help"></select><small id="team-color-help" class="input-help">Ogni squadra deve avere un colore diverso. I colori gi? scelti non sono disponibili.</small><p class="form-error" id="team-error" role="alert"></p><button class="button primary full" type="submit">Crea la squadra <span aria-hidden="true">↗</span></button></form></dialog>
+  <dialog id="team-dialog" aria-labelledby="team-title"><form id="team-form"><div class="dialog-top"><span class="eyebrow">UN NUOVO INIZIO</span><button type="button" class="icon-button" id="close-dialog" aria-label="Chiudi">×</button></div><h2 id="team-title">Dai un nome alla tua squadra.</h2><p>Scegliete un nome e un colore. Gli altri invitati potranno trovarvi e unirsi a voi.</p><p id="team-capacity-help" class="input-help"></p><label for="team-name">Nome della squadra</label><input id="team-name" name="name" maxlength="40" required placeholder="Come vi chiamerete?"><label for="team-color" class="color-label">Colore della squadra</label><select id="team-color" name="color" required aria-describedby="team-color-help"></select><small id="team-color-help" class="input-help">Ogni squadra deve avere un colore diverso. I colori gi? scelti non sono disponibili.</small><p class="form-error" id="team-error" role="alert"></p><button class="button primary full" type="submit">Crea la squadra <span aria-hidden="true">↗</span></button></form></dialog>
   <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
     <form id="delete-form">
       <span class="eyebrow">GESTIONE INVITATI E SQUADRE</span>
