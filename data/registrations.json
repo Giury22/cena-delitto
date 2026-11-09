@@ -6,12 +6,13 @@
       "firstName": "Anna",
       "lastName": "Giurisato",
       "nickname": "😬😬😬😬😬",
-      "passwordSalt": "0727707312fed0ed7309c94b99e562d9",
-      "passwordHash": "adeac0249a1dd334b2e4689db29e5b39ad62a04928c3bf757197af4f60f6bc63",
+      "passwordSalt": "c6efc8f4ac230f018f6273bc3458212e",
+      "passwordHash": "476010067428dc267ec67d207d83f3c46caaf4c4d7125d290ee8d152358d6345",
       "teamId": "e35b97bd-98be-4696-a552-72615c474322",
       "killerPreference": "yes",
       "attending": true,
-      "createdAt": "2026-11-01T17:39:12.424Z"
+      "createdAt": "2026-11-01T17:39:12.424Z",
+      "passwordVersion": "ac6f934c-22a8-4b4a-b04f-f33cbb7c5b6e"
     },
     {
       "id": "fb6a34b4-ab0a-4754-a502-17681b0b6e7d",
@@ -170,18 +171,6 @@
       "createdAt": "2026-11-06T13:27:22.725Z"
     },
     {
-      "id": "1783a46b-cefa-4bc3-8d66-c95d1df8331d",
-      "firstName": "Giovanni",
-      "lastName": "Colcone",
-      "nickname": "Giovanni",
-      "passwordSalt": "e48775979ca856dbb4d9adfef95fb517",
-      "passwordHash": "8cf9454874edd1a65b428678bfd447aa387b0a4b631d0a9fe9c05361a7fb76b1",
-      "teamId": null,
-      "killerPreference": "undecided",
-      "attending": true,
-      "createdAt": "2026-11-06T13:28:58.285Z"
-    },
-    {
       "id": "c91a8f60-aa30-4c73-9d37-c402fd1f4441",
       "firstName": "Giovanni",
       "lastName": "Colcone",
@@ -216,6 +205,18 @@
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-08T11:49:50.788Z"
+    },
+    {
+      "id": "72bc7853-d410-4493-b917-7607e2983556",
+      "firstName": "Ludovica",
+      "lastName": "Favero",
+      "nickname": "Ludo",
+      "passwordSalt": "f29c1036f82dea5b85245772a4d6887f",
+      "passwordHash": "a6ff33300c8f8eb8d5e8ee25b84504250db6c5b7d5250d52db850dc9421e07a5",
+      "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-08T21:06:58.011Z"
     }
   ],
   "teams": [
