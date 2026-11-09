@@ -6,13 +6,14 @@ import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual, cre
 import { promisify } from 'node:util';
 import { JsonStore } from './lib/store.js';
 import { teamColors, teamColorLabel } from './public/team-colors.js';
+import { requestBodyLimit, validProfileImage } from './lib/profile-image.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const scrypt = promisify(scryptCallback);
 const normalized = value => value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('it');
 const nameKey = (first, last) => JSON.stringify([normalized(first), normalized(last)]);
 const hashToken = value => createHash('sha256').update(value).digest('hex');
-const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, passwordVersion, ...user }) => user;
+const publicUser = ({ passwordHash, passwordSalt, pinHash, pinSalt, passwordVersion, ...user }) => ({ ...user, profileImage: user.profileImage ?? null });
 const currentCredentials = (user, session) => (user.passwordVersion ?? null) === (session.passwordVersion ?? null);
 class ApiError extends Error { constructor(status, message) { super(message); this.status = status; } }
 function teamColor(value, teams, teamId = null) {
@@ -40,9 +41,10 @@ async function passwordMatches(user, password) {
 async function readBody(req) {
   if (!req.headers['content-type']?.startsWith('application/json')) throw new ApiError(415, 'È richiesto il formato JSON.');
   let body = '';
+  const maxBytes = requestBodyLimit(req.method, new URL(req.url, 'http://localhost').pathname);
   for await (const chunk of req) {
     body += chunk;
-    if (Buffer.byteLength(body) > 16384) throw new ApiError(413, 'Richiesta troppo grande.');
+    if (Buffer.byteLength(body) > maxBytes) throw new ApiError(413, 'Richiesta troppo grande.');
   }
   try {
     const value = JSON.parse(body || '{}');
@@ -85,7 +87,7 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
     if (session?.role === 'admin') return { role: 'admin', admin: { firstName: adminFirstName, lastName: adminLastName }, users: data.users.map(publicUser), teams: data.teams };
     if (session?.role === 'participant') {
       const user = data.users.find(item => item.id === session.userId);
-      if (user && currentCredentials(user, session)) return { role: 'participant', user: publicUser(user), teams: data.teams.map(team => ({ ...team, members: data.users.filter(item => item.teamId === team.id).map(item => ({ id: item.id, nickname: item.nickname, attending: item.attending })) })) };
+      if (user && currentCredentials(user, session)) return { role: 'participant', user: publicUser(user), teams: data.teams.map(team => ({ ...team, members: data.users.filter(item => item.teamId === team.id).map(item => ({ id: item.id, nickname: item.nickname, attending: item.attending, profileImage: item.profileImage ?? null })) })) };
     }
     return { role: 'guest' };
   }
@@ -214,6 +216,10 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
         if (!user) throw new ApiError(401, 'Profilo non trovato.');
         if (!currentCredentials(user, session)) throw new ApiError(401, 'La password è stata cambiata. Accedi di nuovo.');
         if (req.method === 'PATCH' && url.pathname === '/api/me') {
+          if (body.profileImage !== undefined) {
+            if (!validProfileImage(body.profileImage)) throw new ApiError(400, 'Immagine non valida. Usa una foto JPG, PNG o WebP di massimo 128 KB dopo la riduzione.');
+            user.profileImage = body.profileImage;
+          }
           if (body.nickname !== undefined) user.nickname = field(body.nickname, 'Soprannome', 32);
           if (body.killerPreference !== undefined) {
             if (!['yes', 'no', 'undecided'].includes(body.killerPreference)) throw new ApiError(400, 'Preferenza non valida.');

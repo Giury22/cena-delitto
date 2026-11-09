@@ -1,19 +1,21 @@
 import { Readable } from 'node:stream';
 import { createApp } from '../../server.js';
 import { GitHubStore } from '../../lib/github-store.js';
+import { requestBodyLimit } from '../../lib/profile-image.js';
 
 let appPromise;
 export function adaptHandler(handler) {
   return async (request, context = {}) => {
     const url = new URL(request.url);
+    const maxBytes = requestBodyLimit(request.method, url.pathname);
     const length = Number(request.headers.get('content-length') || 0);
-    if (length > 16384) return Response.json({ error: 'Richiesta troppo grande.' }, { status: 413 });
+    if (length > maxBytes) return Response.json({ error: 'Richiesta troppo grande.' }, { status: 413 });
     // Leggiamo a blocchi anche quando il client omette Content-Length.
     const chunks = []; let size = 0;
     if (request.body) {
       for await (const chunk of request.body) {
         size += chunk.byteLength;
-        if (size > 16384) return Response.json({ error: 'Richiesta troppo grande.' }, { status: 413 });
+        if (size > maxBytes) return Response.json({ error: 'Richiesta troppo grande.' }, { status: 413 });
         chunks.push(Buffer.from(chunk));
       }
     }

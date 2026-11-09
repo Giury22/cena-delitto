@@ -7,6 +7,7 @@ import { createApp } from '../server.js';
 import { JsonStore } from '../lib/store.js';
 import { GitHubStore } from '../lib/github-store.js';
 import netlifyHandler, { adaptHandler } from '../netlify/functions/api.mjs';
+import { MAX_PROFILE_IMAGE_BYTES } from '../lib/profile-image.js';
 
 const password = 'prova';
 const adminIdentity = { firstName: 'OrganizzatoreTest', lastName: 'EsempioTest' };
@@ -100,7 +101,7 @@ test('squadre, modifiche simultanee e preferenze private', async t => {
   assert.ok(updates.every(item => item.status === 200));
   const current = (await call('/api/state', 'GET', undefined, b.cookie)).body;
   assert.equal(current.teams[0].members.length, 2);
-  assert.deepEqual(Object.keys(current.teams[0].members[0]).sort(), ['attending', 'id', 'nickname']);
+  assert.deepEqual(Object.keys(current.teams[0].members[0]).sort(), ['attending', 'id', 'nickname', 'profileImage']);
   const persisted = JSON.parse(await readFile(dataFile, 'utf8'));
   assert.equal(persisted.users[0].killerPreference, 'yes');
   assert.equal(persisted.users[1].teamId, teamId);
@@ -109,6 +110,103 @@ test('squadre, modifiche simultanee e preferenze private', async t => {
   const left = await call('/api/team', 'PATCH', { teamId: null }, b.cookie);
   assert.equal(left.body.user.teamId, null);
   assert.equal((await call('/api/me', 'PATCH', { attending: false }, a.cookie)).body.user.attending, false);
+});
+
+const profilePhoto = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a7ioAAAAASUVORK5CYII=';
+
+function photoWithMetadata(length) {
+  const png = Buffer.from(profilePhoto.split(',')[1], 'base64');
+  const metadata = Buffer.from('Comment\0' + 'a'.repeat(length));
+  const chunk = Buffer.alloc(metadata.length + 12);
+  chunk.writeUInt32BE(metadata.length);
+  chunk.write('tEXt', 4);
+  metadata.copy(chunk, 8);
+  let crc = 0xffffffff;
+  for (const byte of chunk.subarray(4, -4)) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+  }
+  chunk.writeUInt32BE((crc ^ 0xffffffff) >>> 0, chunk.length - 4);
+  return 'data:image/png;base64,' + Buffer.concat([png.subarray(0, -12), chunk, png.subarray(-12)]).toString('base64');
+}
+
+test('foto personale: salvataggio, ritorno al profilo, squadre, privacy del ruolo e rimozione', async t => {
+  const { call, dataFile } = await fixture(t);
+  const owner = await call('/api/auth/register', 'POST', person('Foto'));
+  const other = await call('/api/auth/register', 'POST', person('Complice'));
+  assert.equal(owner.body.user.profileImage, null);
+  assert.equal((await call('/api/me', 'PATCH', { profileImage: profilePhoto })).status, 401);
+  const saved = await call('/api/me', 'PATCH', { profileImage: profilePhoto, killerPreference: 'yes' }, owner.cookie);
+  assert.equal(saved.status, 200);
+  assert.equal(saved.body.user.profileImage, profilePhoto);
+  const login = await call('/api/auth/login', 'POST', person('Foto'));
+  assert.equal(login.body.user.profileImage, profilePhoto);
+  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).users[0].profileImage, profilePhoto);
+  const created = await call('/api/teams', 'POST', { name: 'Riconoscibili', color: 'red' }, owner.cookie);
+  const joined = await call('/api/team', 'PATCH', { teamId: created.body.user.teamId }, other.cookie);
+  const member = joined.body.teams[0].members.find(user => user.id === owner.body.user.id);
+  assert.equal(member.profileImage, profilePhoto);
+  assert.equal(member.killerPreference, undefined);
+  assert.equal(member.firstName, undefined);
+  assert.deepEqual((await call('/api/state')).body, { role: 'guest' });
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  assert.equal(admin.body.users.find(user => user.id === owner.body.user.id).profileImage, profilePhoto);
+  for (const killerPreference of ['no', 'undecided', 'yes']) {
+    const updated = await call('/api/me', 'PATCH', { nickname: 'Foto aggiornata', killerPreference }, owner.cookie);
+    assert.equal(updated.body.user.profileImage, profilePhoto);
+    assert.equal((await call('/api/state', 'GET', undefined, owner.cookie)).body.user.killerPreference, killerPreference);
+  }
+  await call('/api/me', 'PATCH', { profileImage: null, userId: owner.body.user.id }, other.cookie);
+  assert.equal((await call('/api/state', 'GET', undefined, owner.cookie)).body.user.profileImage, profilePhoto);
+  const removed = await call('/api/me', 'PATCH', { profileImage: null }, owner.cookie);
+  assert.equal(removed.body.user.profileImage, null);
+  assert.equal((await call('/api/state', 'GET', undefined, other.cookie)).body.teams[0].members[0].profileImage, null);
+  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).users[0].profileImage, null);
+});
+
+test('immagini non valide e troppo grandi non cambiano il profilo; compatibilità dei profili precedenti', async t => {
+  const { call, store } = await fixture(t);
+  const owner = await call('/api/auth/register', 'POST', person());
+  await call('/api/me', 'PATCH', { profileImage: profilePhoto }, owner.cookie);
+  const before = await store.read();
+  const invalidImages = ['', 42, {}, 'https://example.com/photo.jpg', 'data:image/svg+xml;base64,PHN2Zy8+',
+    'data:image/png;base64,YWJj', 'data:image/jpeg;base64,' + profilePhoto.split(',')[1],
+    profilePhoto + '\" onerror=\"alert(1)', photoWithMetadata(MAX_PROFILE_IMAGE_BYTES)];
+  for (const profileImage of invalidImages) {
+    const response = await call('/api/me', 'PATCH', { nickname: 'Da non salvare', profileImage }, owner.cookie);
+    assert.equal(response.status, 400);
+    assert.deepEqual(await store.read(), before);
+  }
+  await store.mutate(data => { delete data.users[0].profileImage; });
+  const legacy = await call('/api/state', 'GET', undefined, owner.cookie);
+  assert.equal(legacy.body.user.profileImage, null);
+  assert.equal((await call('/api/me', 'PATCH', { killerPreference: 'no' }, owner.cookie)).status, 200);
+});
+
+test('foto oltre 16 KB: sostituzione e limiti identici in locale e nelle funzioni Netlify', async t => {
+  const { call, server } = await fixture(t);
+  const owner = await call('/api/auth/register', 'POST', person());
+  const profileImage = photoWithMetadata(24000);
+  assert.ok(Buffer.byteLength(profileImage) > 16384);
+  assert.equal((await call('/api/me', 'PATCH', { profileImage }, owner.cookie)).status, 200);
+  const handler = adaptHandler(server.listeners('request')[0]);
+  for (const headers of [{}, { 'Content-Length': String(Buffer.byteLength(JSON.stringify({ profileImage }))) }]) {
+    const response = await handler(new Request('https://cena.example/api/me', {
+      method: 'PATCH', headers: { Cookie: owner.cookie, 'Content-Type': 'application/json', ...headers }, body: JSON.stringify({ profileImage })
+    }));
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).user.profileImage, profileImage);
+  }
+  const replaced = await call('/api/me', 'PATCH', { profileImage: profilePhoto }, owner.cookie);
+  assert.equal(replaced.body.user.profileImage, profilePhoto);
+  assert.equal((await call('/api/me', 'PATCH', { profileImage: 'x'.repeat(192 * 1024) }, owner.cookie)).status, 413);
+  for (const headers of [{}, { 'Content-Length': String(192 * 1024 + 1) }]) {
+    const response = await handler(new Request('https://cena.example/api/me', {
+      method: 'PATCH', headers: { Cookie: owner.cookie, 'Content-Type': 'application/json', ...headers }, body: 'x'.repeat(192 * 1024 + 1)
+    }));
+    assert.equal(response.status, 413);
+  }
+  assert.equal((await call('/api/auth/login', 'POST', { ...person(), padding: 'x'.repeat(17000) })).status, 413);
 });
 
 test('colore squadra obbligatorio, condiviso, persistente e modificabile solo dai membri', async t => {
@@ -445,6 +543,52 @@ test('GitHub: un conflitto rilegge il JSON e conserva entrambe le modifiche', as
   assert.equal(data.teams[0].id, 'other');
   assert.equal(data.users[0].id, 'one');
   assert.equal(requests.filter(method => method === 'PUT').length, 2);
+});
+
+test('GitHub legge e aggiorna archivi con foto oltre 1 MB usando il blob dello stesso SHA', async () => {
+  const photo = photoWithMetadata(60000);
+  let data = { version: 1, users: Array.from({ length: 15 }, (_, index) => ({ id: String(index), profileImage: photo })), teams: [] };
+  assert.ok(Buffer.byteLength(JSON.stringify(data)) > 1024 * 1024);
+  let sha = 'a'.repeat(40);
+  let conflict = true;
+  let blobReads = 0;
+  const store = new GitHubStore({ token: 'test-token', repository: 'test/cena', fetcher: async (url, options) => {
+    if (options.method === 'GET' && url.includes('/contents/')) {
+      assert.equal(options.headers.Accept, 'application/vnd.github.object+json');
+      return Response.json({ sha, content: '', encoding: 'none', size: Buffer.byteLength(JSON.stringify(data)) });
+    }
+    if (options.method === 'GET') {
+      assert.equal(url, `https://api.github.com/repos/test/cena/git/blobs/${sha}`);
+      blobReads++;
+      return Response.json({ sha, encoding: 'base64', content: Buffer.from(JSON.stringify(data)).toString('base64') });
+    }
+    const body = JSON.parse(options.body);
+    assert.equal(body.sha, sha);
+    if (conflict) {
+      conflict = false;
+      data.teams.push({ id: 'concurrent', name: 'Altri amici' });
+      sha = 'b'.repeat(40);
+      return Response.json({}, { status: 409 });
+    }
+    data = JSON.parse(Buffer.from(body.content, 'base64').toString('utf8'));
+    return Response.json({}, { status: 200 });
+  } });
+  await store.init();
+  await store.mutate(value => { value.users[0].nickname = 'Foto aggiornata'; });
+  assert.equal(data.users.length, 15);
+  assert.equal(data.users[0].profileImage, photo);
+  assert.equal(data.users[0].nickname, 'Foto aggiornata');
+  assert.equal(data.teams[0].id, 'concurrent');
+  assert.equal(blobReads, 3);
+});
+
+test('un errore nella lettura del blob GitHub impedisce il salvataggio dell’archivio', async () => {
+  const store = new GitHubStore({ token: 'test-token', repository: 'test/cena', fetcher: async (url, options) => {
+    assert.equal(options.method, 'GET');
+    if (url.includes('/contents/')) return Response.json({ sha: 'a'.repeat(40), content: '', encoding: 'none' });
+    return Response.json({}, { status: 403 });
+  } });
+  await assert.rejects(store.mutate(value => value.users.push({ id: 'lost' })), { code: 'GITHUB_READ_FORBIDDEN' });
 });
 
 test('un token senza permesso di scrittura produce un errore preciso senza perdere dati', async () => {
