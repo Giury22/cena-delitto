@@ -169,7 +169,7 @@
       "nickname": "Sole",
       "passwordSalt": "655a1d3b5f37aee284e62f750a3f948f",
       "passwordHash": "b7cd88c90bb1bbd69c90787c8e804548470aceb433854db2e1747374c9dade21",
-      "teamId": null,
+      "teamId": "42da71a0-650e-4429-8885-afa0ed902474",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-06T13:27:22.725Z"
@@ -296,6 +296,13 @@
       "color": "red",
       "createdBy": "6e0faed6-ae80-43fa-a560-7b153d404d80",
       "createdAt": "2026-11-09T13:30:01.978Z"
+    },
+    {
+      "id": "42da71a0-650e-4429-8885-afa0ed902474",
+      "name": "Gli Evergreen",
+      "color": "green",
+      "createdBy": "63a13280-f940-429c-a3f1-15aac5bf23a6",
+      "createdAt": "2026-11-09T19:19:14.482Z"
     }
   ]
 }
