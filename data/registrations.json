@@ -217,6 +217,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-08T21:06:58.011Z"
+    },
+    {
+      "id": "4fed6f8e-f884-4833-b28b-4da211b4a53e",
+      "firstName": "test",
+      "lastName": "prova",
+      "nickname": "test",
+      "passwordSalt": "f77a629b90611545933e83e8537a3fcc",
+      "passwordHash": "45ad8674014a1e387270f85d22efedd9f1822313fed80e277e611cc40ceb4a37",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-09T12:43:12.992Z"
     }
   ],
   "teams": [
