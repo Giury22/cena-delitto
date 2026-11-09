@@ -253,7 +253,7 @@
       "nickname": "CEOBaldo",
       "passwordSalt": "03d64785fc1b4c0bef784e8a23d8f5f6",
       "passwordHash": "6e71d8f3ed6117b7a813c50bb0a381379570c072ac995644d284aa854bb152f7",
-      "teamId": null,
+      "teamId": "7b3dfbbb-5a23-4ad9-a47c-19478f4e8e71",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-09T13:27:15.102Z"
@@ -287,6 +287,13 @@
       "color": "blue",
       "createdBy": "0af8f0c2-eab0-4f1e-880b-3ce319df3ff7",
       "createdAt": "2026-11-08T11:48:27.857Z"
+    },
+    {
+      "id": "7b3dfbbb-5a23-4ad9-a47c-19478f4e8e71",
+      "name": "I Ducatisti squilibrati",
+      "color": "red",
+      "createdBy": "6e0faed6-ae80-43fa-a560-7b153d404d80",
+      "createdAt": "2026-11-09T13:30:01.978Z"
     }
   ]
 }
