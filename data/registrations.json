@@ -181,7 +181,7 @@
       "nickname": "Giò",
       "passwordSalt": "0860d82f732eae1012ae0fc868b89d4b",
       "passwordHash": "86f46182797c1e0ba72e863123a9bb0252b326bbc223aafbb2c456957ed296a6",
-      "teamId": null,
+      "teamId": "42da71a0-650e-4429-8885-afa0ed902474",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-07T07:33:02.452Z"
