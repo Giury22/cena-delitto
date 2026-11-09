@@ -7,8 +7,8 @@
   <meta name="description" content="Un posto a tavola, una squadra e un mistero da risolvere. Conferma la tua presenza alla cena con delitto.">
   <title>Cena con delitto · Il tuo posto a tavola</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=6">
-  <script type="module" src="/app.js?v=9"></script>
+  <link rel="stylesheet" href="/styles.css?v=7">
+  <script type="module" src="/app.js?v=10"></script>
 </head>
 <body>
   <a class="skip" href="#main">Vai al contenuto</a>
@@ -28,6 +28,13 @@
         <button class="button danger" id="confirm-delete" type="submit">Elimina</button>
       </div>
     </form>
+  </dialog>
+  <dialog id="photo-dialog" class="photo-dialog" aria-labelledby="photo-title" aria-describedby="photo-description">
+    <div class="dialog-top"><span class="eyebrow">FOTO PROFILO</span><button type="button" class="icon-button" id="close-photo" aria-label="Chiudi la foto" autofocus>×</button></div>
+    <h2 id="photo-title"></h2>
+    <p id="photo-description"></p>
+    <img id="photo-preview" class="profile-photo-full" alt="" width="320" height="320">
+    <a id="download-photo" class="button primary" download>Scarica foto <span aria-hidden="true">↓</span></a>
   </dialog>
   <dialog id="password-dialog" aria-labelledby="password-title" aria-describedby="password-description">
     <form id="password-form">

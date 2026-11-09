@@ -169,6 +169,19 @@ export async function createApp({ dataFile = path.join(root, 'data/registrations
         res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="partecipanti.csv"' });
         res.end('\uFEFF' + rows.map(row => row.map(cell).join(';')).join('\r\n')); return;
       }
+      const photoTarget = /^\/api\/admin\/users\/([^/]+)\/photo$/.exec(url.pathname);
+      if (req.method === 'GET' && photoTarget) {
+        if (session.role !== 'admin') throw new ApiError(403, 'Accesso riservato all’organizzatore.');
+        const data = await store.read();
+        const user = data.users.find(item => item.id === photoTarget[1]);
+        if (!user) throw new ApiError(404, 'Profilo non trovato.');
+        if (!user.profileImage || !validProfileImage(user.profileImage)) throw new ApiError(404, 'Questo partecipante non ha ancora caricato una foto.');
+        const [, format, content] = /^data:image\/(jpeg|png|webp);base64,(.+)$/.exec(user.profileImage);
+        const name = `${user.firstName}-${user.lastName}`.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'partecipante';
+        const filename = `foto-${name}-${user.id.slice(0, 8)}.${format === 'jpeg' ? 'jpg' : format}`;
+        res.writeHead(200, { 'Content-Type': `image/${format}`, 'Content-Disposition': `attachment; filename="${filename}"` });
+        res.end(Buffer.from(content, 'base64')); return;
+      }
       const passwordTarget = /^\/api\/admin\/users\/([^/]+)\/password$/.exec(url.pathname);
       if (req.method === 'PATCH' && passwordTarget) {
         if (session.role !== 'admin') throw new ApiError(403, 'Accesso riservato all’organizzatore.');

@@ -164,6 +164,41 @@ test('foto personale: salvataggio, ritorno al profilo, squadre, privacy del ruol
   assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).users[0].profileImage, null);
 });
 
+test('solo l’organizzatore scarica la foto corrente con formato e nome file corretti', async t => {
+  const { call, server, store } = await fixture(t);
+  const owner = await call('/api/auth/register', 'POST', person('Gìulia "Foto"'));
+  const other = await call('/api/auth/register', 'POST', person('Altro'));
+  const admin = await call('/api/auth/admin', 'POST', { ...adminIdentity, password });
+  const route = `/api/admin/users/${owner.body.user.id}/photo`;
+  assert.equal((await call(route)).status, 401);
+  assert.equal((await call(route, 'GET', undefined, owner.cookie)).status, 403);
+  assert.equal((await call(route, 'GET', undefined, other.cookie)).status, 403);
+  assert.equal((await call(route, 'GET', undefined, admin.cookie)).status, 404);
+  assert.equal((await call('/api/admin/users/missing/photo', 'GET', undefined, admin.cookie)).status, 404);
+  await call('/api/me', 'PATCH', { profileImage: profilePhoto }, owner.cookie);
+  const before = await store.read();
+  const downloaded = await call(route, 'GET', undefined, admin.cookie);
+  assert.equal(downloaded.status, 200);
+  assert.equal(downloaded.headers.get('content-type'), 'image/png');
+  assert.equal(downloaded.headers.get('content-disposition'), `attachment; filename="foto-giulia-foto-rossi-${owner.body.user.id.slice(0, 8)}.png"`);
+  assert.equal(downloaded.headers.get('cache-control'), 'no-store');
+  assert.equal(downloaded.headers.get('x-content-type-options'), 'nosniff');
+  assert.deepEqual(await store.read(), before);
+  const handler = adaptHandler(server.listeners('request')[0]);
+  const download = () => handler(new Request(`https://cena.example${route}`, { headers: { Cookie: admin.cookie } }));
+  const response = await download();
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-type'), 'image/png');
+  assert.deepEqual(Buffer.from(await response.arrayBuffer()), Buffer.from(profilePhoto.split(',')[1], 'base64'));
+  const replacement = photoWithMetadata(20000);
+  await call('/api/me', 'PATCH', { profileImage: replacement }, owner.cookie);
+  assert.deepEqual(Buffer.from(await (await download()).arrayBuffer()), Buffer.from(replacement.split(',')[1], 'base64'));
+  await call('/api/me', 'PATCH', { profileImage: null }, owner.cookie);
+  assert.equal((await download()).status, 404);
+  await store.mutate(data => { delete data.users[0].profileImage; });
+  assert.equal((await download()).status, 404);
+});
+
 test('immagini non valide e troppo grandi non cambiano il profilo; compatibilità dei profili precedenti', async t => {
   const { call, store } = await fixture(t);
   const owner = await call('/api/auth/register', 'POST', person());
