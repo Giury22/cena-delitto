@@ -259,6 +259,18 @@
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-09T13:27:15.102Z"
+    },
+    {
+      "id": "72f25942-d377-4f75-89a0-bfd001fbfcc5",
+      "firstName": "Laura",
+      "lastName": "Sciortino",
+      "nickname": "Laura",
+      "passwordSalt": "949337229beb50db3fc1eab9da3a31eb",
+      "passwordHash": "6b7dc695a68c0605c5b918a152ec3f7e9cd892ac487793c69f6f401f777ece6e",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-10T07:59:34.664Z"
     }
   ],
   "teams": [
