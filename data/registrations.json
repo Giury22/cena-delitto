@@ -120,7 +120,7 @@
       "nickname": "Fra",
       "passwordSalt": "03709aca1957d95dd6bee622714b3e97",
       "passwordHash": "532d15d00acfd4cba8ebbf40e325f81b075e72b221a954879e48a7dd8550c7b5",
-      "teamId": null,
+      "teamId": "4939b525-10b5-421d-a393-573c2d8e9b4f",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-03T11:16:06.734Z"
