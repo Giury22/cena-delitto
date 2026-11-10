@@ -284,6 +284,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-10T14:54:59.793Z"
+    },
+    {
+      "id": "1a47d3ed-16e7-4485-9f17-4bb4e05d33ad",
+      "firstName": "Lorenzo",
+      "lastName": "Dal Zotto",
+      "nickname": "Pozzo",
+      "passwordSalt": "fb192ec6f1a9b63bd07f283d34dcf36b",
+      "passwordHash": "e41c5702d0486d43e10e841fc747fb915d8f94a023e0bc3334b3ba3112f26907",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-10T21:02:17.611Z"
     }
   ],
   "teams": [
