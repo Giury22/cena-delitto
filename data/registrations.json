@@ -267,7 +267,7 @@
       "nickname": "Laura",
       "passwordSalt": "949337229beb50db3fc1eab9da3a31eb",
       "passwordHash": "6b7dc695a68c0605c5b918a152ec3f7e9cd892ac487793c69f6f401f777ece6e",
-      "teamId": null,
+      "teamId": "7b3dfbbb-5a23-4ad9-a47c-19478f4e8e71",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-10T07:59:34.664Z",
