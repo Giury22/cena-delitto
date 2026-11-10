@@ -292,7 +292,7 @@
       "nickname": "Pozzo",
       "passwordSalt": "fb192ec6f1a9b63bd07f283d34dcf36b",
       "passwordHash": "e41c5702d0486d43e10e841fc747fb915d8f94a023e0bc3334b3ba3112f26907",
-      "teamId": null,
+      "teamId": "4939b525-10b5-421d-a393-573c2d8e9b4f",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-10T21:02:17.611Z"
@@ -340,6 +340,13 @@
       "color": "green",
       "createdBy": "63a13280-f940-429c-a3f1-15aac5bf23a6",
       "createdAt": "2026-11-09T19:19:14.482Z"
+    },
+    {
+      "id": "4939b525-10b5-421d-a393-573c2d8e9b4f",
+      "name": "El gringo",
+      "color": "cyan",
+      "createdBy": "1a47d3ed-16e7-4485-9f17-4bb4e05d33ad",
+      "createdAt": "2026-11-10T22:21:44.296Z"
     }
   ]
 }
