@@ -280,7 +280,7 @@
       "nickname": "Koki",
       "passwordSalt": "91e74c7fb72ab407825ad97eaf907fc3",
       "passwordHash": "64f1451b67f2742bacd4f302c6f5e41e0c2a6f1b51396ba3444bdaa7d4898e93",
-      "teamId": null,
+      "teamId": "70aee2bb-3904-4c6a-b29b-3e5c3a893d89",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-10T14:54:59.793Z"
