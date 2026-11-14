@@ -58,12 +58,13 @@
       "firstName": "Chiara",
       "lastName": "Giurisato",
       "nickname": "Chiara",
-      "passwordSalt": "e8a4609605acafd41c8ae8994961dd2f",
-      "passwordHash": "ccd8b16ad6d73e823456163cfdc40f2f5df579c3c247667439d1d19487cc804a",
+      "passwordSalt": "5bb35b60eaf284f713ac598d2e2da464",
+      "passwordHash": "2773948cd61103dae8a7f9eb45193b3217fc6b93fa44060128ffe5efd348f1a9",
       "teamId": null,
       "killerPreference": "undecided",
       "attending": true,
-      "createdAt": "2026-11-02T13:16:23.727Z"
+      "createdAt": "2026-11-02T13:16:23.727Z",
+      "passwordVersion": "4192f458-154c-4447-9cf0-cea2c9c1700f"
     },
     {
       "id": "b6ba7e56-c5fb-4bd7-83e8-da085a9e2d09",
