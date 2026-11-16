@@ -312,6 +312,18 @@
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-10T22:38:46.889Z"
+    },
+    {
+      "id": "bc9a6389-dc24-4c54-859c-49d8c93abe8a",
+      "firstName": "Filippo",
+      "lastName": "Levorin",
+      "nickname": "Pippo",
+      "passwordSalt": "2a58f98cd663171955c1cb476269488f",
+      "passwordHash": "b6748dc0d0705dfc0d39f077926cb00fe87be1e875765f323ff882947e5e0530",
+      "teamId": null,
+      "killerPreference": "undecided",
+      "attending": true,
+      "createdAt": "2026-11-16T12:19:58.194Z"
     }
   ],
   "teams": [
