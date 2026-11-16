@@ -320,7 +320,7 @@
       "nickname": "Pippo",
       "passwordSalt": "2a58f98cd663171955c1cb476269488f",
       "passwordHash": "b6748dc0d0705dfc0d39f077926cb00fe87be1e875765f323ff882947e5e0530",
-      "teamId": null,
+      "teamId": "123717a8-5f92-43ec-99c9-0ea2cc186b2a",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-16T12:19:58.194Z"
