@@ -48,7 +48,7 @@
       "nickname": "Cesco",
       "passwordSalt": "3e4ba70f1a174d9a13d36ffe5ecefc41",
       "passwordHash": "7be8aad9062442417b6b7118cc7d067c78f489f80cdb5ce695cfe6dc91cf5701",
-      "teamId": null,
+      "teamId": "1bd465a9-0612-4a32-bfc6-c2a43d7d51e7",
       "killerPreference": "undecided",
       "attending": true,
       "createdAt": "2026-11-02T13:11:15.417Z"
@@ -366,6 +366,13 @@
       "color": "cyan",
       "createdBy": "1a47d3ed-16e7-4485-9f17-4bb4e05d33ad",
       "createdAt": "2026-11-10T22:21:44.296Z"
+    },
+    {
+      "id": "1bd465a9-0612-4a32-bfc6-c2a43d7d51e7",
+      "name": "Little Mountain",
+      "color": "black",
+      "createdBy": "c92633c6-533d-4022-8e1d-efd960e36968",
+      "createdAt": "2026-11-18T17:59:24.993Z"
     }
   ]
 }
