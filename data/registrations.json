@@ -236,7 +236,7 @@
       "nickname": "Giuli",
       "passwordSalt": "213b12256a19aff288255cf344c41521",
       "passwordHash": "9672afcdf6067d5285f9cdb45dada7ea4b6625d016846edbf639335d82f7d107",
-      "teamId": null,
+      "teamId": "1bd465a9-0612-4a32-bfc6-c2a43d7d51e7",
       "killerPreference": "no",
       "attending": true,
       "createdAt": "2026-11-09T13:15:09.727Z",
